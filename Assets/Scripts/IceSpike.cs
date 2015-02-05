@@ -56,18 +56,8 @@ public class IceSpike : Bullet {
         }
     }
 
-    public IEnumerator ShapeIce(Vector3 scale)
+    public void ShapeIce(Vector3 scale)
     {
-        transform.localScale = 0.1f*transform.up+(transform.forward+transform.right);
-        for (float i = 0; i < scale.y; i+=scale.y*Time.deltaTime)
-        {
-            if (scale.y < transform.localScale.y)
-            {
-                yield return null;
-            }
-            transform.localScale += new Vector3(0f,scale.y*Time.deltaTime,0f);
-            yield return new WaitForSeconds(0.01f);
-        }
-        yield return null;
+        transform.localScale = scale;
     }
 }

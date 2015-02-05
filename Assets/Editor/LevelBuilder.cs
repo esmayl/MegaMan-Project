@@ -26,6 +26,9 @@ public class LevelBuilder : EditorWindow  {
     Vector2 enemyScroll;
     Vector2 bossScroll;
 
+    void OnEnable() { SceneView.onSceneGUIDelegate += OnSceneGUI;}
+    void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI;}
+
     [MenuItem("File/LevelBuilder")]
 	static void Init () {
         Object[] tempObjArray=Resources.LoadAll("Hazards");
@@ -79,11 +82,15 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(platforms[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
+                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
                                 objToPlace = platforms[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
+                                spawnPos.y = Mathf.Round(spawnPos.y);
+                                spawnPos.z = Mathf.Round(spawnPos.z);
+                                Debug.Log(spawnPos.y + " " + spawnPos.z);
                                 tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 tempObject.transform.position = spawnPos;
 
@@ -101,7 +108,7 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(hazards[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-
+                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
                                 objToPlace = hazards[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
@@ -127,7 +134,7 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(enemies[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-
+                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
                                 objToPlace = enemies[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
@@ -150,7 +157,7 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(bosses[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-
+                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
                                 objToPlace = bosses[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
@@ -174,7 +181,7 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(doors[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-
+                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
                                 objToPlace = doors[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
@@ -189,8 +196,17 @@ public class LevelBuilder : EditorWindow  {
                         }
                         EditorGUILayout.EndScrollView();
                 EditorGUILayout.EndVertical();
-        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndHorizontal();            
+    }
 
-                 
+    void OnSceneGUI(SceneView sceneView)
+    {
+        Event e = Event.current;
+
+        if (e.type == EventType.MouseDown)
+        {
+            objToPlace = null;
+        }
+
     }
 }

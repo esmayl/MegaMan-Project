@@ -13,7 +13,6 @@ public class IcePower : Power {
     float snowTextureAmount;
     RaycastHit hit;
 
-	// Use this for initialization
 	public override void Start () 
     {
         base.Start();
@@ -40,7 +39,6 @@ public class IcePower : Power {
 
     public IEnumerator DoAttack(Vector3 pos)
     {
-        //Time.timeScale = 0.5f;
         foreach (Transform t in iceParent.transform)
         {
             Destroy(t.gameObject);
@@ -107,7 +105,7 @@ public class IcePower : Power {
         GameObject obj = Instantiate(iceObj) as GameObject;
 
         ShapeIce(obj,scale);
-            obj.transform.position = position - new Vector3(0,obj.collider.bounds.extents.y*2,0);
+            obj.transform.position = position-transform.up/2;
             obj.transform.Rotate(transform.forward, Random.Range(min, max));
             obj.transform.Rotate(transform.right, Random.Range(0, 45));
         obj.transform.parent = iceParent.transform;
@@ -115,8 +113,7 @@ public class IcePower : Power {
         obj.transform.collider.isTrigger = true;
         obj.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
         obj.GetComponent<IceSpike>().player = transform;
-
-        value = 0.1f;
+        
     }
 
     public void ShapeIce(GameObject ga ,Vector3 scale)
