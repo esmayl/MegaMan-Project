@@ -82,7 +82,8 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(platforms[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
+                                if(tempObject != null){DestroyImmediate(tempObject);}
+
                                 objToPlace = platforms[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
@@ -108,12 +109,15 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(hazards[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
+                                if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = hazards[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
+                                spawnPos.y = Mathf.Round(spawnPos.y);
+                                spawnPos.z = Mathf.Round(spawnPos.z);
+                                Debug.Log(spawnPos.y + " " + spawnPos.z);
                                 tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 tempObject.transform.position = spawnPos;
 
@@ -134,12 +138,15 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(enemies[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
+                                if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = enemies[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
+                                spawnPos.y = Mathf.Round(spawnPos.y);
+                                spawnPos.z = Mathf.Round(spawnPos.z);
+                                Debug.Log(spawnPos.y + " " + spawnPos.z);
                                 tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 tempObject.transform.position = spawnPos;
 
@@ -157,12 +164,15 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(bosses[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
+                                if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = bosses[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
+                                spawnPos.y = Mathf.Round(spawnPos.y);
+                                spawnPos.z = Mathf.Round(spawnPos.z);
+                                Debug.Log(spawnPos.y + " " + spawnPos.z);
                                 tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 tempObject.transform.position = spawnPos;
 
@@ -181,12 +191,15 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(doors[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if(objToPlace != null){DestroyImmediate(objToPlace,true);}
+                                if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = doors[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
+                                spawnPos.y = Mathf.Round(spawnPos.y);
+                                spawnPos.z = Mathf.Round(spawnPos.z);
+                                Debug.Log(spawnPos.y + " " + spawnPos.z);
                                 tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 tempObject.transform.position = spawnPos;
 
