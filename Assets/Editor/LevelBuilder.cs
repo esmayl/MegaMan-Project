@@ -10,23 +10,29 @@ public class LevelBuilder : EditorWindow  {
     public static GameObject[] doors;
     public static GameObject[] enemies;
     public static GameObject[] bosses;
+    public static Material[] materials;
     public static Camera sceneCam;
-    GameObject objToPlace;
-    float depth = -0.5f;
-    Vector3 location;
-    int buttonWidth =110;
-    bool canGroup = false;
-    string groupName ="";
 
+    bool preview = false;
+    GameObject previewObject;
+    GameObject objToPlace;
+    Material selectedMaterial = new Material(Shader.Find("Diffuse"));
 
     Vector3 spawnPos;
-    GameObject tempObject;
+    float depth = -0.5f;
+    Vector3 mousePos;
+
+    int buttonWidth =110;
+    string groupName ="";
+    bool canGroup = false;
+
 
     Vector2 platformScroll;
     Vector2 hazardScroll;
     Vector2 doorScroll;
     Vector2 enemyScroll;
     Vector2 bossScroll;
+    Vector2 textureScroll;
 
     void OnEnable() { SceneView.onSceneGUIDelegate += OnSceneGUI;}
     void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI;}
@@ -34,7 +40,8 @@ public class LevelBuilder : EditorWindow  {
     //SceneView.FrameLastActiveSceneViewWithLock();
 
     [MenuItem("File/LevelBuilder")]
-	static void Init () {
+	static void Init () 
+    {
         Object[] tempObjArray=Resources.LoadAll("Hazards");
         hazards = new GameObject[tempObjArray.Length];
         for(int i = 0;i<tempObjArray.Length;i++){
@@ -65,10 +72,16 @@ public class LevelBuilder : EditorWindow  {
         {
             bosses[i] = (GameObject)tempObjArray[i];
         }
+        tempObjArray = Resources.LoadAll("Materials");
+        materials = new Material[tempObjArray.Length];
+        for (int i = 0; i < tempObjArray.Length; i++)
+        {
+            materials[i] = tempObjArray[i] as Material;
+        }
 
         LevelBuilder window = (LevelBuilder)EditorWindow.GetWindow(typeof(LevelBuilder));
-        window.minSize = new Vector2(410, 300);
-        window.maxSize = new Vector2(410, 300);
+        window.minSize = new Vector2(410, 350);
+        window.maxSize = new Vector2(410, 350);
         window.title = "LevelBuilder";
 
         sceneCam = GameObject.Find("SceneCamera").camera;
@@ -77,6 +90,11 @@ public class LevelBuilder : EditorWindow  {
 
     void OnGUI()
     {
+        if (preview)
+        {
+            GUILayout.Label("Press Left-Mouse to place object, press Escape to leave\n To group select multiple objects and select this window", GUILayout.Width(400));
+        }
+
         EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical(GUILayout.Height(220));
                 
@@ -88,7 +106,7 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(platforms[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if(tempObject != null){DestroyImmediate(tempObject);}
+                                if(previewObject != null){DestroyImmediate(previewObject);}
 
                                 objToPlace = platforms[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
@@ -96,11 +114,12 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
                                 spawnPos.z = Mathf.Round(spawnPos.z);
-                                Debug.Log(spawnPos.y + " " + spawnPos.z);
-                                tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                                tempObject.transform.position = spawnPos;
+                                previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                                previewObject.transform.position = spawnPos;
+                                previewObject.renderer.material = selectedMaterial;
 
-                                Selection.activeGameObject = tempObject;
+                                Selection.activeGameObject = previewObject;
+                                preview = true;
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -113,18 +132,19 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(hazards[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if (tempObject != null) { DestroyImmediate(tempObject); }
+                                if (previewObject != null) { DestroyImmediate(previewObject); }
                                 objToPlace = hazards[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
                                 spawnPos.z = Mathf.Round(spawnPos.z);
-                                Debug.Log(spawnPos.y + " " + spawnPos.z);
-                                tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                                tempObject.transform.position = spawnPos;
+                                previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                                previewObject.transform.position = spawnPos;
+                                previewObject.renderer.material = selectedMaterial;
 
-                                Selection.activeGameObject = tempObject;
+                                Selection.activeGameObject = previewObject;
+                                preview = true;
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -140,18 +160,19 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(enemies[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if (tempObject != null) { DestroyImmediate(tempObject); }
+                                if (previewObject != null) { DestroyImmediate(previewObject); }
                                 objToPlace = enemies[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
                                 spawnPos.z = Mathf.Round(spawnPos.z);
-                                Debug.Log(spawnPos.y + " " + spawnPos.z);
-                                tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                                tempObject.transform.position = spawnPos;
+                                previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                                previewObject.transform.position = spawnPos;
+                                previewObject.renderer.material = selectedMaterial;
 
-                                Selection.activeGameObject = tempObject;
+                                Selection.activeGameObject = previewObject;
+                                preview = true;
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -164,18 +185,19 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(bosses[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if (tempObject != null) { DestroyImmediate(tempObject); }
+                                if (previewObject != null) { DestroyImmediate(previewObject); }
                                 objToPlace = bosses[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
                                 spawnPos.z = Mathf.Round(spawnPos.z);
-                                Debug.Log(spawnPos.y + " " + spawnPos.z);
-                                tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                                tempObject.transform.position = spawnPos;
+                                previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                                previewObject.transform.position = spawnPos;
+                                previewObject.renderer.material = selectedMaterial;
 
-                                Selection.activeGameObject = tempObject;
+                                Selection.activeGameObject = previewObject;
+                                preview = true;
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -189,24 +211,40 @@ public class LevelBuilder : EditorWindow  {
 
                             if (GUILayout.Button(doors[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
-                                if (tempObject != null) { DestroyImmediate(tempObject); }
+                                if (previewObject != null) { DestroyImmediate(previewObject); }
                                 objToPlace = doors[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
                                 spawnPos.z = Mathf.Round(spawnPos.z);
-                                Debug.Log(spawnPos.y + " " + spawnPos.z);
-                                tempObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                                tempObject.transform.position = spawnPos;
+                                previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                                previewObject.transform.position = spawnPos;
+                                previewObject.renderer.material = selectedMaterial;
 
-                                Selection.activeGameObject = tempObject;
+                                Selection.activeGameObject = previewObject;
+                                preview = true;
                             }
                         }
                         EditorGUILayout.EndScrollView();
-                        
+
+                        GUILayout.Label("Textures");
+                            textureScroll = EditorGUILayout.BeginScrollView(textureScroll, GUILayout.Width(130), GUILayout.Height(100));
+                            for (int i = 0; i < materials.Length; i++)
+                            {
+                                if (GUILayout.Button(materials[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
+                                {
+                                    selectedMaterial= materials[i];
+                                    if (previewObject != null)
+                                    {
+                                        previewObject.renderer.material = selectedMaterial;
+                                    }
+                                }
+                            }
+                            EditorGUILayout.EndScrollView();
                 EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.BeginVertical(GUILayout.Height(150));
         if (canGroup)
         {
@@ -219,6 +257,7 @@ public class LevelBuilder : EditorWindow  {
                 foreach (GameObject ga in Selection.gameObjects)
                 {
                     ga.transform.parent = group.transform;
+                    ga.isStatic = true;
                 }
                 group = null;
             }
@@ -232,22 +271,36 @@ public class LevelBuilder : EditorWindow  {
         Event e = Event.current;
 
         
-        if (tempObject != null)
+        if (previewObject != null)
         {
-            Vector3 tempPos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width -(sceneCam.pixelRect.width-e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-            tempPos.x = depth;
-            tempPos.y = Mathf.Round(tempPos.y);
-            tempPos.z = Mathf.Round(tempPos.z);
-            tempObject.transform.position = tempPos;
+            mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width -(sceneCam.pixelRect.width-e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+            mousePos.x = depth;
+            mousePos.y = Mathf.Round(mousePos.y);
+            mousePos.z = Mathf.Round(mousePos.z);
+            previewObject.transform.position = mousePos;
         }
 
-        if (Selection.gameObjects.Length > 1) { canGroup = true; Debug.Log(Selection.gameObjects.Length); }
-        if (Selection.gameObjects.Length <= 1) { canGroup = false; Debug.Log(Selection.gameObjects.Length); }
+        if (Selection.gameObjects.Length > 1) { canGroup = true; }
+        if (Selection.gameObjects.Length <= 1) { canGroup = false; }
 
-        if (e.type == EventType.MouseDown && tempObject != null)
+        if (e.isMouse && previewObject != null)
         {
-            tempObject = null;
-            Debug.Log(tempPos); 
+            if (e.type == EventType.mouseDown)
+            {
+                mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                mousePos.x = depth;
+                mousePos.y = Mathf.Round(mousePos.y);
+                mousePos.z = Mathf.Round(mousePos.z);
+                GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                tempObj.transform.position = mousePos;
+                tempObj.renderer.material = selectedMaterial;
+                tempObj = null;
+            }
+        }
+        if (e.keyCode == KeyCode.Escape && previewObject != null)
+        {
+            DestroyImmediate(previewObject);
+            preview = false;
         }
 
     }
