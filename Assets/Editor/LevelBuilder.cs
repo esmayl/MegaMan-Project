@@ -10,6 +10,7 @@ public class LevelBuilder : EditorWindow  {
     public static GameObject[] doors;
     public static GameObject[] enemies;
     public static GameObject[] bosses;
+    public static Camera sceneCam;
     GameObject objToPlace;
     float depth = -0.5f;
     Vector3 location;
@@ -18,7 +19,6 @@ public class LevelBuilder : EditorWindow  {
     string groupName ="";
 
 
-    Camera sceneCam;
     Vector3 spawnPos;
     GameObject tempObject;
 
@@ -30,6 +30,8 @@ public class LevelBuilder : EditorWindow  {
 
     void OnEnable() { SceneView.onSceneGUIDelegate += OnSceneGUI;}
     void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI;}
+
+    //SceneView.FrameLastActiveSceneViewWithLock();
 
     [MenuItem("File/LevelBuilder")]
 	static void Init () {
@@ -68,6 +70,9 @@ public class LevelBuilder : EditorWindow  {
         window.minSize = new Vector2(410, 300);
         window.maxSize = new Vector2(410, 300);
         window.title = "LevelBuilder";
+
+        sceneCam = GameObject.Find("SceneCamera").camera;
+
 	}
 
     void OnGUI()
@@ -87,7 +92,6 @@ public class LevelBuilder : EditorWindow  {
 
                                 objToPlace = platforms[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
-                                sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
@@ -97,7 +101,6 @@ public class LevelBuilder : EditorWindow  {
                                 tempObject.transform.position = spawnPos;
 
                                 Selection.activeGameObject = tempObject;
-                                SceneView.FrameLastActiveSceneViewWithLock();
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -113,7 +116,6 @@ public class LevelBuilder : EditorWindow  {
                                 if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = hazards[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
-                                sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
@@ -123,7 +125,6 @@ public class LevelBuilder : EditorWindow  {
                                 tempObject.transform.position = spawnPos;
 
                                 Selection.activeGameObject = tempObject;
-                                SceneView.FrameLastActiveSceneViewWithLock();
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -142,7 +143,6 @@ public class LevelBuilder : EditorWindow  {
                                 if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = enemies[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
-                                sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
@@ -152,7 +152,6 @@ public class LevelBuilder : EditorWindow  {
                                 tempObject.transform.position = spawnPos;
 
                                 Selection.activeGameObject = tempObject;
-                                SceneView.FrameLastActiveSceneViewWithLock();
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -168,7 +167,6 @@ public class LevelBuilder : EditorWindow  {
                                 if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = bosses[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
-                                sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
@@ -178,7 +176,6 @@ public class LevelBuilder : EditorWindow  {
                                 tempObject.transform.position = spawnPos;
 
                                 Selection.activeGameObject = tempObject;
-                                SceneView.FrameLastActiveSceneViewWithLock();
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -195,7 +192,6 @@ public class LevelBuilder : EditorWindow  {
                                 if (tempObject != null) { DestroyImmediate(tempObject); }
                                 objToPlace = doors[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
-                                sceneCam = SceneView.currentDrawingSceneView.camera;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
                                 spawnPos.x = depth;
                                 spawnPos.y = Mathf.Round(spawnPos.y);
@@ -205,7 +201,6 @@ public class LevelBuilder : EditorWindow  {
                                 tempObject.transform.position = spawnPos;
 
                                 Selection.activeGameObject = tempObject;
-                                SceneView.FrameLastActiveSceneViewWithLock();
                             }
                         }
                         EditorGUILayout.EndScrollView();
@@ -236,13 +231,23 @@ public class LevelBuilder : EditorWindow  {
     {
         Event e = Event.current;
 
+        
+        if (tempObject != null)
+        {
+            Vector3 tempPos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width -(sceneCam.pixelRect.width-e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+            tempPos.x = depth;
+            tempPos.y = Mathf.Round(tempPos.y);
+            tempPos.z = Mathf.Round(tempPos.z);
+            tempObject.transform.position = tempPos;
+        }
+
         if (Selection.gameObjects.Length > 1) { canGroup = true; Debug.Log(Selection.gameObjects.Length); }
         if (Selection.gameObjects.Length <= 1) { canGroup = false; Debug.Log(Selection.gameObjects.Length); }
 
         if (e.type == EventType.MouseDown && tempObject != null)
         {
             tempObject = null;
-            Debug.Log(e.mousePosition); 
+            Debug.Log(tempPos); 
         }
 
     }
