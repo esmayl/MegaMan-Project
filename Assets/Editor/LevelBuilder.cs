@@ -14,6 +14,8 @@ public class LevelBuilder : EditorWindow  {
     float depth = -0.5f;
     Vector3 location;
     int buttonWidth =110;
+    bool canGroup = false;
+    string groupName ="";
 
 
     Camera sceneCam;
@@ -70,9 +72,8 @@ public class LevelBuilder : EditorWindow  {
 
     void OnGUI()
     {
-        Debug.Log(""+platforms.Length);
         EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginVertical(GUILayout.Height(220));
                 
                         EditorGUILayout.Space();
                         GUILayout.Label("Platforms");
@@ -208,17 +209,40 @@ public class LevelBuilder : EditorWindow  {
                             }
                         }
                         EditorGUILayout.EndScrollView();
+                        
                 EditorGUILayout.EndVertical();
-        EditorGUILayout.EndHorizontal();            
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginVertical(GUILayout.Height(150));
+        if (canGroup)
+        {
+            GUILayout.Label("Group name:");
+            groupName = EditorGUILayout.TextField(groupName, GUILayout.Width(100));
+            if (GUILayout.Button("Group"))
+            {
+                GameObject group = new GameObject();
+                group.name = groupName;
+                foreach (GameObject ga in Selection.gameObjects)
+                {
+                    ga.transform.parent = group.transform;
+                }
+                group = null;
+            }
+        }
+
+        EditorGUILayout.EndVertical();
     }
 
     void OnSceneGUI(SceneView sceneView)
     {
         Event e = Event.current;
 
-        if (e.type == EventType.MouseDown)
+        if (Selection.gameObjects.Length > 1) { canGroup = true; Debug.Log(Selection.gameObjects.Length); }
+        if (Selection.gameObjects.Length <= 1) { canGroup = false; Debug.Log(Selection.gameObjects.Length); }
+
+        if (e.type == EventType.MouseDown && tempObject != null)
         {
-            objToPlace = null;
+            tempObject = null;
+            Debug.Log(e.mousePosition); 
         }
 
     }
