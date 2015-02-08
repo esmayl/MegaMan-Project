@@ -9,22 +9,33 @@ public class PlayerMovement : MonoBehaviour {
 	public ProceduralMaterial substance;
     public Power[] powers;
     public Power activePower;
-	public int height = 4;
     internal GameObject powerHolder;
 
     internal bool canJump = true;
     internal Animator anim;
     internal Rigidbody controller;
     internal Vector3 startDepth;
+    float speed = 3;
+
+    //jump variables
+    int maxJumpHeight = 4;
+    Vector3 groundedHeight;
+    Vector3 velocity;
+    bool jumping = false;
+    float timer;
+    
     float tempValue;
     int powerCounter = 0;
-	int timer;
     RaycastHit rayhit;
 
-	public virtual void Start () {
+	public virtual void Start () 
+    {
+        groundedHeight = transform.position;
         startDepth = transform.position;
         anim = GetComponent<Animator>();
 		controller = GetComponent<Rigidbody>();
+        
+        anim.SetBool("Move", true);
         
         activePower = powers[powerCounter];
         powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
@@ -32,29 +43,51 @@ public class PlayerMovement : MonoBehaviour {
 	
 	public virtual void FixedUpdate () 
     {
-        controller.AddForce(transform.forward * 2 * 50);
-        anim.SetFloat("Speed",1f);
+        velocity.x = 0;
+
+        if (Input.GetAxis("Horizontal")>0.1f && canJump|| Input.GetAxis("Horizontal")< -0.1f && canJump)
+        {
+            if (Input.GetAxis("Horizontal") > 0.1f)
+            {
+                transform.LookAt(transform.position + Camera.main.transform.right);
+                velocity.z = 1 * speed;
+                controller.velocity = velocity;
+            }
+            if (Input.GetAxis("Horizontal") < -0.1f)
+            {
+                transform.LookAt(transform.position - Camera.main.transform.right);
+                velocity.z = -1* speed;
+                controller.velocity = velocity;
+            }
+
+        }
+        else
+        {
+            velocity.z = 0;
+            anim.SetBool("Move", false);
+        }
+
+        anim.SetFloat("Speed",velocity.z);
+
 
         #region Fixes
         if (transform.position.x > startDepth.x)
         {
             transform.position = new Vector3(startDepth.x,transform.position.y,transform.position.z);
         }
-        if (transform.rotation.y > 0)
+        if (groundedHeight.y<transform.position.y && !jumping && !canJump)
         {
-            transform.rotation = Quaternion.identity;
+            velocity = controller.velocity;
+            velocity.y = -5;
+            controller.velocity = velocity;
         }
-        if (transform.position.y > 2)
-        {
-            transform.position = new Vector3(transform.position.x, 2, transform.position.z);
-        }
+
         #endregion
 
-        if (Input.GetButtonUp("Jump") && canJump)
+        if (Input.GetButton("Jump") && canJump)
         {
             anim.SetBool("Move", false);
-            Jump();
-            //StartCoroutine("JumpCheck");
+            StartCoroutine("Jump");
         }
 
         if (Input.touchCount >= 1 || Input.GetMouseButtonDown(0))
@@ -98,11 +131,24 @@ public class PlayerMovement : MonoBehaviour {
         }
 
 	}
-    public void Jump()
+    public IEnumerator Jump()
     {
         canJump = false;
+        timer = 0;
         anim.SetTrigger("Jump");
-        controller.AddForce(transform.up * Time.deltaTime * height*1000,ForceMode.Impulse);
+
+        while (Input.GetButton("Jump") && timer <1)
+        {
+            jumping = true;
+            velocity.z = Input.GetAxis("Horizontal") * speed;
+            velocity.y = 5;
+            controller.velocity = velocity;
+            timer += Time.deltaTime*2;
+            yield return new WaitForEndOfFrame();
+        }
+        jumping = false;
+        Debug.Log("Back on the ground");
+        yield return null;       
     }
 
     public void SummonBoss()
@@ -120,6 +166,8 @@ public class PlayerMovement : MonoBehaviour {
     {
         if (col.transform.gameObject.layer == LayerMask.NameToLayer("Ground") && !canJump)
         {
+            velocity.y = 0;
+            groundedHeight = transform.position;
             anim.SetBool("Move", true);
             canJump = true;
             Debug.Log("On the ground");
