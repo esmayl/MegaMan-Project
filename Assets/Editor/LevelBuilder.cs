@@ -43,6 +43,9 @@ public class LevelBuilder : EditorWindow  {
     [MenuItem("File/LevelBuilder")]
 	static void Init () 
     {
+        SceneView.lastActiveSceneView.orthographic = true;
+        SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+
         UnityEngine.Object[] tempObjArray=Resources.LoadAll("Hazards");
         hazards = new GameObject[tempObjArray.Length];
         for(int i = 0;i<tempObjArray.Length;i++){
@@ -238,6 +241,14 @@ public class LevelBuilder : EditorWindow  {
                                     if (previewObject != null)
                                     {
                                         previewObject.renderer.material = selectedMaterial;
+                                    }
+                                    if (Selection.gameObjects.Length > 0)
+                                    {
+                                        GameObject[] gas = Selection.gameObjects;
+                                        foreach (GameObject ga in gas)
+                                        {
+                                            ga.renderer.material = selectedMaterial;
+                                        }
                                     }
                                 }
                             }
