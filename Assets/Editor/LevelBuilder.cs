@@ -35,17 +35,18 @@ public class LevelBuilder : EditorWindow  {
     Vector2 bossScroll;
     Vector2 textureScroll;
 
-    void OnEnable() { SceneView.onSceneGUIDelegate += OnSceneGUI;}
-    void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI;}
+    void OnEnable() 
+    { 
+        SceneView.onSceneGUIDelegate += OnSceneGUI;        
+        SceneView.lastActiveSceneView.orthographic = true;
+        SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+    }
 
-    //SceneView.FrameLastActiveSceneViewWithLock();
+    void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI; SceneView.lastActiveSceneView.orthographic = false; }
 
     [MenuItem("File/LevelBuilder")]
 	static void Init () 
     {
-        SceneView.lastActiveSceneView.orthographic = true;
-        SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
-
         UnityEngine.Object[] tempObjArray=Resources.LoadAll("Hazards");
         hazards = new GameObject[tempObjArray.Length];
         for(int i = 0;i<tempObjArray.Length;i++){
