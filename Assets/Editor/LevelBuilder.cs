@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System;
 
 
 public class LevelBuilder : EditorWindow  {
@@ -42,7 +43,7 @@ public class LevelBuilder : EditorWindow  {
     [MenuItem("File/LevelBuilder")]
 	static void Init () 
     {
-        Object[] tempObjArray=Resources.LoadAll("Hazards");
+        UnityEngine.Object[] tempObjArray=Resources.LoadAll("Hazards");
         hazards = new GameObject[tempObjArray.Length];
         for(int i = 0;i<tempObjArray.Length;i++){
             hazards[i] = (GameObject)tempObjArray[i];
@@ -103,7 +104,6 @@ public class LevelBuilder : EditorWindow  {
                         platformScroll = EditorGUILayout.BeginScrollView(platformScroll, GUILayout.Width(130), GUILayout.Height(100));
                         for (int i = 0; i < platforms.Length;i++ )
                         {
-
                             if (GUILayout.Button(platforms[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if(previewObject != null){DestroyImmediate(previewObject);}
@@ -118,7 +118,7 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject.transform.position = spawnPos;
                                 previewObject.renderer.material = selectedMaterial;
 
-                                Selection.activeGameObject = previewObject;
+                                Selection.activeGameObject = previewObject;                
                                 preview = true;
                             }
                         }
@@ -208,7 +208,7 @@ public class LevelBuilder : EditorWindow  {
                         doorScroll = EditorGUILayout.BeginScrollView(doorScroll, GUILayout.Width(130), GUILayout.Height(100));
                         for (int i = 0; i < doors.Length; i++)
                         {
-
+                            
                             if (GUILayout.Button(doors[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
@@ -270,13 +270,19 @@ public class LevelBuilder : EditorWindow  {
     {
         Event e = Event.current;
 
+        if (e.keyCode == KeyCode.Escape && preview)
+        {
+            DestroyImmediate(previewObject);
+            preview = false;
+        }
         
         if (previewObject != null)
         {
+            Selection.activeGameObject = previewObject;
             mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width -(sceneCam.pixelRect.width-e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
             mousePos.x = depth;
-            mousePos.y = Mathf.Round(mousePos.y);
-            mousePos.z = Mathf.Round(mousePos.z);
+            mousePos.y = (float)Math.Round(mousePos.y,1);
+            mousePos.z = (float)Math.Round(mousePos.z,1);
             previewObject.transform.position = mousePos;
         }
 
@@ -289,18 +295,13 @@ public class LevelBuilder : EditorWindow  {
             {
                 mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
                 mousePos.x = depth;
-                mousePos.y = Mathf.Round(mousePos.y);
-                mousePos.z = Mathf.Round(mousePos.z);
+                mousePos.y = (float)Math.Round(mousePos.y, 1);
+                mousePos.z = (float)Math.Round(mousePos.z, 1);
                 GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                 tempObj.transform.position = mousePos;
                 tempObj.renderer.material = selectedMaterial;
                 tempObj = null;
             }
-        }
-        if (e.keyCode == KeyCode.Escape && previewObject != null)
-        {
-            DestroyImmediate(previewObject);
-            preview = false;
         }
 
     }
