@@ -34,6 +34,11 @@ public class LevelBuilder : EditorWindow  {
     Vector2 enemyScroll;
     Vector2 bossScroll;
     Vector2 textureScroll;
+    Vector2 oldDelta;
+
+    Vector3 mouseStart = new Vector3();
+    float tempMouseHeight = 0;
+
 
     void OnEnable() 
     { 
@@ -121,6 +126,8 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
                                 previewObject.renderer.material = selectedMaterial;
+                                previewObject.layer = LayerMask.NameToLayer("Preview");
+
 
                                 Selection.activeGameObject = previewObject;                
                                 preview = true;
@@ -146,6 +153,8 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
                                 previewObject.renderer.material = selectedMaterial;
+                                previewObject.layer = LayerMask.NameToLayer("Preview");
+
 
                                 Selection.activeGameObject = previewObject;
                                 preview = true;
@@ -173,7 +182,9 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.renderer.material = selectedMaterial;
+                                previewObject.transform.GetChild(0).renderer.material = selectedMaterial;
+                                previewObject.layer = LayerMask.NameToLayer("Preview");
+
 
                                 Selection.activeGameObject = previewObject;
                                 preview = true;
@@ -199,6 +210,8 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
                                 previewObject.renderer.material = selectedMaterial;
+                                previewObject.layer = LayerMask.NameToLayer("Preview");
+
 
                                 Selection.activeGameObject = previewObject;
                                 preview = true;
@@ -225,6 +238,7 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
                                 previewObject.renderer.material = selectedMaterial;
+                                previewObject.layer = LayerMask.NameToLayer("Preview");
 
                                 Selection.activeGameObject = previewObject;
                                 preview = true;
@@ -239,7 +253,7 @@ public class LevelBuilder : EditorWindow  {
                                 if (GUILayout.Button(materials[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                                 {
                                     selectedMaterial= materials[i];
-                                    if (previewObject != null)
+                                    if (previewObject != null && previewObject.tag != "Enemy")
                                     {
                                         previewObject.renderer.material = selectedMaterial;
                                     }
@@ -290,6 +304,7 @@ public class LevelBuilder : EditorWindow  {
         
         if (previewObject != null)
         {
+            previewObject.layer = LayerMask.NameToLayer("Preview");
             Selection.activeGameObject = previewObject;
             mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width -(sceneCam.pixelRect.width-e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
             mousePos.x = depth;
@@ -305,15 +320,103 @@ public class LevelBuilder : EditorWindow  {
         {
             if (e.type == EventType.mouseDown)
             {
-                mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-                mousePos.x = depth;
-                mousePos.y = (float)Math.Round(mousePos.y, 1);
-                mousePos.z = (float)Math.Round(mousePos.z, 1);
-                GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                tempObj.transform.position = mousePos;
-                tempObj.renderer.material = selectedMaterial;
-                tempObj = null;
+                if (e.type == EventType.mouseUp)
+                {
+
+                    mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                    mousePos.x = depth;
+                    mousePos.y = (float)Math.Round(mousePos.y, 1);
+                    mousePos.z = (float)Math.Round(mousePos.z, 1);
+                    GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                    tempObj.transform.position = mousePos;
+                    if (tempObj.layer != LayerMask.NameToLayer("Enemy"))
+                    {
+                        tempObj.renderer.material = selectedMaterial;
+                    }
+                    else
+                    {
+                        tempObj.transform.GetChild(0).renderer.material = selectedMaterial;
+                    }
+                    tempObj = null;
+                }
+                    //if (e.mousePosition.x - mouseBegin.x > e.mousePosition.y - mouseBegin.y)
+                    //{
+                    //    Debug.Log(mouseBegin.x + " " + mouseBegin.y +" to :"+e.mousePosition.x +" "+e.mousePosition.y);
+                    //    GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                    //    tempObj.transform.position = mousePos;
+                    //}
+                    //mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                    //mousePos.x = depth;
+                    //mousePos.y = (float)Math.Round(mousePos.y, 1);
+                    //mousePos.z = (float)Math.Round(mousePos.z, 1);
+                    //get mouse drag position
+                    //check if mouse.x drag is bigger than mouse.y drag if true instantiate mouse.x dir
+
             }
+
+        }
+
+        if (e.type == EventType.MouseDown)
+        {
+            mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+            mouseStart.x = depth;
+            mouseStart.y = Mathf.Round(mouseStart.y);
+            mouseStart.z = Mathf.Round(mouseStart.z);
+            oldDelta = e.delta;
+            tempMouseHeight = mouseStart.y;
+        }
+
+        if (e.type == EventType.MouseDrag)
+        {
+            
+            DragAndDrop.PrepareStartDrag();
+
+            DragAndDrop.StartDrag("TestDrag");
+            
+            e.Use();
+            Ray ray = sceneCam.ScreenPointToRay(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+            RaycastHit hit;
+
+
+            //get layers "Preview" && selected object's layer and use as layermask
+
+            int layers = (1<<LayerMask.NameToLayer("Preview"));
+
+            layers |= (1 << LayerMask.NameToLayer(LayerMask.LayerToName(objToPlace.layer)));
+            layers = ~layers;
+            Debug.Log(layers);
+
+            if(!Physics.Raycast(ray,out hit,1000f,layers))
+            {
+                    if (Mathf.Abs(oldDelta.x - e.delta.x) >= 1)
+                    {
+                        if (e.delta.x < -0.1f)
+                        {
+                            mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                            mouseStart.x = depth;
+                            mouseStart.y = tempMouseHeight;
+                            mouseStart.z = Mathf.Round(mouseStart.z);
+                            GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                            tempObj.transform.position = mouseStart - (tempObj.transform.forward * -1);
+                        }
+                        if (e.delta.x > 0.1f)
+                        {
+                            mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                            mouseStart.x = depth;
+                            mouseStart.y = tempMouseHeight;
+                            mouseStart.z = Mathf.Round(mouseStart.z);
+                            GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                            tempObj.transform.position = mouseStart + (tempObj.transform.forward * 1);
+                        }
+                    }
+            }
+                if (e.type == EventType.mouseUp)
+                {
+
+
+                }
+                    DragAndDrop.PrepareStartDrag();
+                
         }
 
     }
