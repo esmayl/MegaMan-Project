@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour {
     public Power activePower;
     internal GameObject powerHolder;
 
+    internal int hp = 100;
     internal bool canJump = true;
     internal Animator anim;
     internal Rigidbody controller;
@@ -18,7 +19,8 @@ public class PlayerMovement : MonoBehaviour {
     float speed = 3;
 
     //jump variables
-    int maxJumpHeight = 4;
+    int[] numberArray = new int[15];
+    int a = 89, b = 55, c = 0, i = 0;
     Vector3 groundedHeight;
     Vector3 velocity;
     bool jumping = false;
@@ -45,7 +47,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         velocity.x = 0;
 
-        if (Input.GetAxis("Horizontal")>0.1f && canJump|| Input.GetAxis("Horizontal")< -0.1f && canJump)
+        if (Input.GetAxis("Horizontal")>0.1f|| Input.GetAxis("Horizontal")< -0.1f)
         {
             if (Input.GetAxis("Horizontal") > 0.1f)
             {
@@ -66,20 +68,24 @@ public class PlayerMovement : MonoBehaviour {
             velocity.z = 0;
             anim.SetBool("Move", false);
         }
-
-        anim.SetFloat("Speed",velocity.z);
-
+        if (canJump)
+        {
+            anim.SetBool("Move", true);
+            anim.SetFloat("Speed", velocity.z);
+        }
 
         #region Fixes
         if (transform.position.x > startDepth.x)
         {
             transform.position = new Vector3(startDepth.x,transform.position.y,transform.position.z);
         }
-        if (groundedHeight.y<transform.position.y && !jumping && !canJump)
+        if (i<=1 && !canJump)
         {
-            velocity = controller.velocity;
-            velocity.y = -5;
-            controller.velocity = velocity;
+            StopAllCoroutines();
+            StartCoroutine("Falling");
+           //velocity = controller.velocity;
+           //velocity.y = -5;
+           //controller.velocity = velocity;
         }
 
         #endregion
@@ -87,6 +93,7 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetButton("Jump") && canJump)
         {
             anim.SetBool("Move", false);
+            StopAllCoroutines();
             StartCoroutine("Jump");
         }
 
@@ -131,21 +138,74 @@ public class PlayerMovement : MonoBehaviour {
         }
 
 	}
+
+    public IEnumerator Falling()
+    {
+        for (i = 0; i < 10; i++)
+        {
+            if (i == 0) 
+            {
+                numberArray[i] = i; 
+                Debug.Log(numberArray[i] + " iteration: " + i);
+            }
+
+            if (i == 1) 
+            {
+                
+                numberArray[i] = i; 
+                Debug.Log(numberArray[i] + " iteration: " + i);
+
+            }
+            if (i == 2)
+            {
+                numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
+                Debug.Log(numberArray[i] + " iteration: " + i);
+            }
+            if (i > 2)
+            {
+                numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
+
+                Debug.Log(numberArray[i] + " iteration: " + i);
+                velocity.z = Input.GetAxis("Horizontal") * speed * 1.2f;
+                velocity.y = -(numberArray[i] / 2);
+                controller.velocity = velocity;
+                yield return new WaitForSeconds(0.15f);
+            }
+
+        }
+
+        yield return null;
+    }
+
     public IEnumerator Jump()
     {
         canJump = false;
-        timer = 0;
         anim.SetTrigger("Jump");
+        a = 89;
+        b = 55;
 
-        while (Input.GetButton("Jump") && timer <1)
+        yield return new WaitForSeconds(0.1f);
+
+        //if (Input.GetButtonUp("Jump")) { jumping = false; yield return null; }
+
+
+        while (Input.GetButton("Jump") && i>2)
         {
             jumping = true;
-            velocity.z = Input.GetAxis("Horizontal") * speed;
-            velocity.y = 5;
-            controller.velocity = velocity;
-            timer += Time.deltaTime*2;
-            yield return new WaitForEndOfFrame();
+            for (i = a; i > 2; i = i - c)
+            {
+                c = a - b;
+                a = b;
+                b = c;
+
+                velocity.z = Input.GetAxis("Horizontal") * speed * 1.2f;
+                velocity.y = c/2;
+                controller.velocity = velocity;
+                yield return new WaitForSeconds(0.1f);
+            }
         }
+
+
         jumping = false;
         Debug.Log("Back on the ground");
         yield return null;       
@@ -168,7 +228,6 @@ public class PlayerMovement : MonoBehaviour {
         {
             velocity.y = 0;
             groundedHeight = transform.position;
-            anim.SetBool("Move", true);
             canJump = true;
             Debug.Log("On the ground");
         }

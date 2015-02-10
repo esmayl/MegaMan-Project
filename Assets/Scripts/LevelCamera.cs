@@ -1,14 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class LevelCamera : MonoBehaviour {
 
     public GameObject player;
+    public Image hpBar;
+    public Image barForeground;
+    public Image chargeBar;
+
+
+    Image[] hp = new Image[10];
+    Image[] charges = new Image[10];
     RaycastHit hit;
+
+    void Start()
+    {
+        //if (player.GetComponent<PlayerMovement>().hp > 0)
+        //{
+        //    for (int i = 0; i < player.GetComponent<PlayerMovement>().hp / 10; i++)
+        //    {
+        //        Image overlay = Image.Instantiate(barForeground) as Image;
+        //        overlay.rectTransform.position = hpBar.rectTransform.position;
+        //
+        //        
+        //    }
+        //}
+    }
 
     void LateUpdate()
     {
         SafeFrameCheck();
+
+
     }
 
     public void MoveForward()

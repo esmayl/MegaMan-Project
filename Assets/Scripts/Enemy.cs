@@ -5,11 +5,8 @@ using UnityEngine.UI;
 public class Enemy : MonoBehaviour {
 
     public float hp = 100;
-    public Image hpBarTexture;
 
 	public virtual void Update () {
-
-        hpBarTexture.fillAmount = hp/100;
 
         if (hp <= 0)
         {
