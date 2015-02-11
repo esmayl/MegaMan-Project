@@ -5,35 +5,37 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
-    public LayerMask ignoreLayers;
 	public ProceduralMaterial substance;
     public Power[] powers;
     public Power activePower;
+    public GameObject gun;
     internal GameObject powerHolder;
 
+    
     internal int hp = 100;
-    internal bool canJump = true;
     internal Animator anim;
+
+    //movement variables
     internal Rigidbody controller;
     internal Vector3 startDepth;
     float speed = 3;
 
     //jump variables
+    internal bool canJump = true;
+    static Vector3 velocity;
+    RaycastHit hit;
     int[] numberArray = new int[15];
     int a = 89, b = 55, c = 0, i = 1;
-    Vector3 groundedHeight;
-    static Vector3 velocity;
     bool jumping = false;
     bool falling = false;
-    float temp;
     float timer;
     
-    float tempValue;
+
     int powerCounter = 0;
-    RaycastHit rayhit;
 
 	public virtual void Start () 
     {
+        timer = 0;
         startDepth = transform.position;
         anim = GetComponent<Animator>();
 		controller = GetComponent<Rigidbody>();
@@ -47,20 +49,19 @@ public class PlayerMovement : MonoBehaviour {
 	public virtual void FixedUpdate () 
     {
         ChangeVelocity(0,velocity.y,velocity.z);
-        temp = Mathf.Abs(transform.position.y - groundedHeight.y);
         
-
+        //Set movement speed & direction
         if (Input.GetAxis("Horizontal")>0.1f || Input.GetAxis("Horizontal")< -0.1f)
         {
             if (Input.GetAxis("Horizontal") > 0.1f)
             {
                 transform.LookAt(transform.position + Camera.main.transform.right);
-                ChangeVelocity(velocity.x,velocity.y,1 * speed);
+                ChangeVelocity(velocity.x,velocity.y,1 * speed*1.2f);
             }
             if (Input.GetAxis("Horizontal") < -0.1f)
             {
                 transform.LookAt(transform.position - Camera.main.transform.right);
-                ChangeVelocity(velocity.x, velocity.y, -1 * speed);
+                ChangeVelocity(velocity.x, velocity.y, -1 * speed*1.2f);
             }
 
         }
@@ -70,26 +71,79 @@ public class PlayerMovement : MonoBehaviour {
 
             anim.SetBool("Move", false);
         }
+
+        //Enable / dissable running animation
         if (canJump)
         {
             anim.SetBool("Move", true);
             anim.SetFloat("Speed", velocity.z);
         }
+        else
+        {
+            anim.SetFloat("Speed", 0);
+        }
 
         #region Fixes
+
+        //Sets player x position back to begin x position when changed
         if (transform.position.x > startDepth.x)
         {
             transform.position = new Vector3(startDepth.x,transform.position.y,transform.position.z);
         }
 
+        //Makes player fall correctly when falling off a platform
+        //Fix canJump bug where grounded but canJump != true
+        if (timer > 0.5f)
+        {
+            if (Physics.Raycast(new Ray(transform.position, -transform.up), out hit))
+            {
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                {
+
+                    if (hit.distance > 0.7f && !jumping && canJump)
+                    {
+
+                        canJump = false;
+                        StopCoroutine("Jumping");
+
+                        StartCoroutine("Falling");
+                    }
+                    if (hit.distance < 0.25f && !falling && !canJump)
+                    {
+                        canJump = true;
+                        velocity.y = 0;
+                    }
+                }
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("LevelEnd"))
+                {
+
+                    if (hit.distance > 0.7f && !jumping && canJump)
+                    {
+
+                        canJump = false;
+                        StopCoroutine("Jumping");
+
+                        StartCoroutine("Falling");
+                    }
+                }
+            }
+            timer = 0;
+        }
+        else
+        {
+            timer += Time.deltaTime;
+        }
+
         #endregion
 
-        if (Input.GetButton("Jump") && canJump)
+
+        if (Input.GetButtonDown("Jump") && canJump)
         {
             anim.SetBool("Move", false);
             StartCoroutine("Jump");
         }
 
+        //Set Power
         if (Input.touchCount >= 1 || Input.GetMouseButtonDown(0))
         {
             activePower = powers[powerCounter];
@@ -98,37 +152,25 @@ public class PlayerMovement : MonoBehaviour {
                 Destroy(powerHolder);
                 powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
             }
-
-            tempValue = activePower.value;
         }
 
-        //Input.touchCount <= 0 || 
+        //Fire power
         if (Input.GetMouseButtonUp(0))
 		{
-            activePower.value = tempValue;
             activePower.Attack(transform);
-
-            tempValue = 0.1f;
-            activePower.value = tempValue;
 		}
         
+        //Switch to next power
         if (Input.GetMouseButtonDown(1))
         {
             SwitchPower();
         }
-
-        if (tempValue >= 2) { tempValue = 2f; }
 
         if (substance.GetProceduralFloat("Snow") >= 1)
         {
             SummonBoss();
         }
 
-        if (temp < 0.5f && !falling )
-        {
-            StartCoroutine("Falling");
-            //Debug.Log(temp);
-        }
 
         controller.velocity = velocity;
 	}
@@ -136,8 +178,10 @@ public class PlayerMovement : MonoBehaviour {
     public IEnumerator Falling()
     {
         if (falling) { yield return null; }
-        
-            for (i = 0; i < 10; i++)
+
+        if (!jumping && !canJump)
+        {
+            for (i = 0; i < 9; i++)
             {
                 falling = true;
                 if (i == 0)
@@ -153,44 +197,59 @@ public class PlayerMovement : MonoBehaviour {
                 {
                     numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
                 }
-                if (i > 3)
+                if (i > 5)
                 {
-                    numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
-
                     ChangeVelocity(velocity.x, -(numberArray[i] / 3), Input.GetAxis("Horizontal") * speed * 1.2f);
                     controller.velocity = velocity;
                     yield return new WaitForSeconds(0.1f);
                 }
             }
+        }
 
+            falling = false;
             yield return null;
     }
 
     public IEnumerator Jump()
     {
         if (jumping) { yield return null; }
-        canJump = false;
-        anim.SetTrigger("Jump");
-        a = 89;
-        b = 55;
+            canJump = false;
+        if (i > 1 && !falling) 
+        {
+            a = 89;
+            b = 55;
+            anim.SetTrigger("Jump");
+            yield return new WaitForSeconds(0.1f); 
+        }
 
-        yield return new WaitForSeconds(0.1f);
+        else { yield return null; }
 
-        while (Input.GetButton("Jump") && i>3 && !canJump)
+        
+        
+
+
+        while (i>1 && !canJump)
         {
             jumping = true;
-            for (i = a; i >3; i = i - c)
+            for (i = a; i >1 ; i = i - c)
             {
                 c = a - b;
                 a = b;
                 b = c;
 
-                ChangeVelocity(velocity.x, c / 4, Input.GetAxis("Horizontal") * speed);
-                controller.velocity = velocity;
-                yield return new WaitForSeconds(0.3f);
+                if (c > 4)
+                {
+                    ChangeVelocity(velocity.x, c / 4, Input.GetAxis("Horizontal") * speed);
+                    controller.velocity = velocity;
+                    yield return new WaitForSeconds(0.2f);
+                }
+                if (c < 4)
+                {
+                    ChangeVelocity(velocity.x, c / 4, Input.GetAxis("Horizontal") * speed);
+                    controller.velocity = velocity;
+                }
             }
         }
-
         jumping = false;
         StartCoroutine("Falling");
         yield return null;       
@@ -212,10 +271,8 @@ public class PlayerMovement : MonoBehaviour {
         if (col.transform.gameObject.layer == LayerMask.NameToLayer("Ground") && !canJump)
         {
             StopCoroutine("Falling");
-            velocity.y = 0;
             falling = false;
-            jumping = false;
-            groundedHeight = transform.position;
+            velocity.y = 0;
             canJump = true;
             Debug.Log("On the ground");
         }

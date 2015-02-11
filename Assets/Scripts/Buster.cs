@@ -15,7 +15,7 @@ public class Buster : Power {
         if (value >= 2) { value = 2f; }
 
         Transform gun;
-        gun = player.FindChild("Gun");
+        gun = player.GetComponent<PlayerMovement>().gun.transform;
 
         instance = Instantiate(bullet, gun.transform.position + gun.transform.forward, Quaternion.identity) as GameObject;
         instance.transform.localScale = new Vector3(value, value, value);

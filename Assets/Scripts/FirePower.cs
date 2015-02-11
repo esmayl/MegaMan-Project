@@ -8,7 +8,7 @@ public class FirePower : Power {
     public override void Attack(Transform player)
     {
         Transform gun;
-        gun = player.FindChild("Gun");
+        gun = player.GetComponent<PlayerMovement>().gun.transform;
 
         Vector3 tempPos = gun.transform.position + (gun.transform.forward + gun.transform.up);
         tempPos.x = player.position.x;

@@ -24,7 +24,7 @@ public class IcePower : Power {
     public override void Attack(Transform player)
     {
         Transform gun;
-        gun = player.FindChild("Gun");
+        gun = player.GetComponent<PlayerMovement>().gun.transform;
 
         instance = Instantiate(iceObj, gun.transform.position+gun.transform.forward, Quaternion.identity) as GameObject;
         instance.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
