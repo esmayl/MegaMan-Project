@@ -22,11 +22,29 @@ public class Enemy : MonoBehaviour {
 
     public virtual void Jump() { }
     public virtual void MoveForward() { }
+    public virtual void MoveTo(Transform target) { }
     public virtual void LookAtPlayer(Vector3 PlayerPos) { }
     public virtual void Attack(Vector3 Direction) { }
-    public virtual void DetectPlayer(float Radius) 
+    public IEnumerator DetectPlayer(float Radius) 
     {
-        //Insert overlapSphereCast 
+        while (true)
+        {
+            Collider[] hits;
+            hits = Physics.OverlapSphere(transform.position, Radius);
+            if (hits.Length > 0)
+            {
+                Debug.Log("Looping");
+                foreach (Collider h in hits)
+                {
+                    if (h.gameObject.layer == LayerMask.NameToLayer("Player"))
+                    {
+                        Debug.Log("" + h);
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(1f);
+        }
     }
 
     /// <summary>

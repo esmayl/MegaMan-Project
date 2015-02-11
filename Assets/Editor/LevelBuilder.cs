@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 
@@ -26,6 +27,12 @@ public class LevelBuilder : EditorWindow  {
     int buttonWidth =110;
     string groupName ="";
     bool canGroup = false;
+    bool snap = false;
+    static LevelBuilder window;
+    List<GameObject> instanceList = new List<GameObject>();
+    int mask;
+
+    
 
 
     Vector2 platformScroll;
@@ -47,7 +54,7 @@ public class LevelBuilder : EditorWindow  {
         SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
     }
 
-    void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI; SceneView.lastActiveSceneView.orthographic = false; }
+    void OnDisable() { SceneView.onSceneGUIDelegate -= OnSceneGUI; SceneView.lastActiveSceneView.orthographic = false; DragAndDrop.PrepareStartDrag(); }
 
     [MenuItem("File/LevelBuilder")]
 	static void Init () 
@@ -89,7 +96,7 @@ public class LevelBuilder : EditorWindow  {
             materials[i] = tempObjArray[i] as Material;
         }
 
-        LevelBuilder window = (LevelBuilder)EditorWindow.GetWindow(typeof(LevelBuilder));
+        window = (LevelBuilder)EditorWindow.GetWindow(typeof(LevelBuilder));
         window.minSize = new Vector2(410, 350);
         window.maxSize = new Vector2(410, 350);
         window.title = "LevelBuilder";
@@ -103,6 +110,7 @@ public class LevelBuilder : EditorWindow  {
         if (preview)
         {
             GUILayout.Label("Press Left-Mouse to place object, press Escape to leave\n To group select multiple objects and select this window", GUILayout.Width(400));
+            snap = GUILayout.Toggle(snap, "Snapping");
         }
 
         EditorGUILayout.BeginHorizontal();
@@ -116,6 +124,8 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(platforms[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if(previewObject != null){DestroyImmediate(previewObject);}
+
+                                SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
 
                                 objToPlace = platforms[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
@@ -144,6 +154,9 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(hazards[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+
+                                SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+
                                 objToPlace = hazards[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
@@ -174,6 +187,9 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(enemies[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+
+                                SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+
                                 objToPlace = enemies[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
@@ -201,6 +217,9 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(bosses[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+                                
+                                SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+
                                 objToPlace = bosses[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
@@ -221,6 +240,7 @@ public class LevelBuilder : EditorWindow  {
                 EditorGUILayout.EndVertical();
 
                 EditorGUILayout.BeginVertical();
+                        EditorGUILayout.Space();
                         GUILayout.Label("Doors");
                         doorScroll = EditorGUILayout.BeginScrollView(doorScroll, GUILayout.Width(130), GUILayout.Height(100));
                         for (int i = 0; i < doors.Length; i++)
@@ -229,6 +249,9 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(doors[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+
+                                SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+
                                 objToPlace = doors[i];
                                 Selection.activeObject = SceneView.currentDrawingSceneView;
                                 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
@@ -246,6 +269,7 @@ public class LevelBuilder : EditorWindow  {
                         }
                         EditorGUILayout.EndScrollView();
 
+                        EditorGUILayout.Space();                        
                         GUILayout.Label("Textures");
                             textureScroll = EditorGUILayout.BeginScrollView(textureScroll, GUILayout.Width(130), GUILayout.Height(100));
                             for (int i = 0; i < materials.Length; i++)
@@ -253,18 +277,36 @@ public class LevelBuilder : EditorWindow  {
                                 if (GUILayout.Button(materials[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                                 {
                                     selectedMaterial= materials[i];
-                                    if (previewObject != null && previewObject.tag != "Enemy")
+                                    if (previewObject != null)
                                     {
-                                        previewObject.renderer.material = selectedMaterial;
+                                        if (previewObject.GetComponent<MeshFilter>())
+                                        {
+                                            previewObject.renderer.material = selectedMaterial;
+                                        }
+                                        else
+                                        {
+                                            previewObject.transform.GetChild(0).renderer.material = selectedMaterial;
+                                        }
                                     }
                                     if (Selection.gameObjects.Length > 0)
                                     {
                                         GameObject[] gas = Selection.gameObjects;
                                         foreach (GameObject ga in gas)
                                         {
-                                            ga.renderer.material = selectedMaterial;
+                                            if (ga.GetComponent<MeshFilter>())
+                                            {
+                                                ga.renderer.material = selectedMaterial;
+                                            }
+                                            if (ga.name.Contains("(Group)"))
+                                            {
+                                                foreach (Transform t in ga.transform)
+                                                {
+                                                    t.GetChild(0).renderer.material = selectedMaterial;
+                                                }
+                                            }
                                         }
                                     }
+                                    
                                 }
                             }
                             EditorGUILayout.EndScrollView();
@@ -279,12 +321,13 @@ public class LevelBuilder : EditorWindow  {
             if (GUILayout.Button("Group"))
             {
                 GameObject group = new GameObject();
-                group.name = groupName;
+                group.name = groupName+"(Group)";
                 foreach (GameObject ga in Selection.gameObjects)
                 {
                     ga.transform.parent = group.transform;
                     ga.isStatic = true;
                 }
+                Selection.activeGameObject = group;
                 group = null;
             }
         }
@@ -296,8 +339,13 @@ public class LevelBuilder : EditorWindow  {
     {
         Event e = Event.current;
 
+        if (canGroup)
+        {
+            window.Repaint();
+        }
         if (e.keyCode == KeyCode.Escape && preview)
         {
+            window.Repaint();
             DestroyImmediate(previewObject);
             preview = false;
         }
@@ -316,108 +364,99 @@ public class LevelBuilder : EditorWindow  {
         if (Selection.gameObjects.Length > 1) { canGroup = true; }
         if (Selection.gameObjects.Length <= 1) { canGroup = false; }
 
+
         if (e.isMouse && previewObject != null)
         {
             if (e.type == EventType.mouseDown)
             {
-                if (e.type == EventType.mouseUp)
-                {
-
-                    mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-                    mousePos.x = depth;
-                    mousePos.y = (float)Math.Round(mousePos.y, 1);
-                    mousePos.z = (float)Math.Round(mousePos.z, 1);
-                    GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                    tempObj.transform.position = mousePos;
-                    if (tempObj.layer != LayerMask.NameToLayer("Enemy"))
-                    {
-                        tempObj.renderer.material = selectedMaterial;
-                    }
-                    else
-                    {
-                        tempObj.transform.GetChild(0).renderer.material = selectedMaterial;
-                    }
-                    tempObj = null;
-                }
-                    //if (e.mousePosition.x - mouseBegin.x > e.mousePosition.y - mouseBegin.y)
-                    //{
-                    //    Debug.Log(mouseBegin.x + " " + mouseBegin.y +" to :"+e.mousePosition.x +" "+e.mousePosition.y);
-                    //    GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                    //    tempObj.transform.position = mousePos;
-                    //}
-                    //mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-                    //mousePos.x = depth;
-                    //mousePos.y = (float)Math.Round(mousePos.y, 1);
-                    //mousePos.z = (float)Math.Round(mousePos.z, 1);
-                    //get mouse drag position
-                    //check if mouse.x drag is bigger than mouse.y drag if true instantiate mouse.x dir
-
+                mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                mouseStart.x = depth;
+                if (snap) { mouseStart.y = Mathf.Round(mouseStart.y); mouseStart.z = Mathf.Round(mouseStart.z); }
+                else { mouseStart.y = (float)Math.Round(mouseStart.y, 1); mouseStart.z = (float)Math.Round(mouseStart.z,1); }
+                oldDelta = e.delta;
             }
 
+            if (e.type == EventType.mouseUp && e.button ==0)
+            {
+
+                mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
+                mousePos.x = depth;
+                mask = (1 << objToPlace.layer);
+
+                if (snap) { mousePos.y = Mathf.Round(mousePos.y); mousePos.z = Mathf.Round(mousePos.z); }
+                else { mousePos.y = (float)Math.Round(mousePos.y, 1); mousePos.z = (float)Math.Round(mousePos.z, 1); }
+
+                if (objToPlace.layer != LayerMask.NameToLayer("Enemy"))
+                {
+                    if (!Physics.SphereCast(sceneCam.ScreenPointToRay(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y)), 0.3f, 1000, mask))
+                    {
+                        GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                        tempObj.transform.position = mousePos;
+                        tempObj.renderer.material = selectedMaterial;
+                        tempObj = null;
+                    }
+                }
+                else
+                {
+                    GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                    tempObj.transform.position = mousePos;
+                    tempObj.transform.GetChild(0).renderer.material = selectedMaterial;
+                    tempObj = null;
+                }
+
+            }
         }
 
-        if (e.type == EventType.MouseDown)
+        if (e.type == EventType.mouseDown)
         {
             mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
             mouseStart.x = depth;
-            mouseStart.y = Mathf.Round(mouseStart.y);
-            mouseStart.z = Mathf.Round(mouseStart.z);
-            oldDelta = e.delta;
-            tempMouseHeight = mouseStart.y;
+            if (snap) { mouseStart.y = Mathf.Round(mouseStart.y); mouseStart.z = Mathf.Round(mouseStart.z); }
+            else { mouseStart.y = (float)Math.Round(mouseStart.y, 1); mouseStart.z = (float)Math.Round(mouseStart.z, 1); }
+            tempMouseHeight = sceneCam.pixelRect.height - e.mousePosition.y;
         }
 
-        if (e.type == EventType.MouseDrag)
-        {
-            
-            DragAndDrop.PrepareStartDrag();
-
-            DragAndDrop.StartDrag("TestDrag");
-            
-            e.Use();
-            Ray ray = sceneCam.ScreenPointToRay(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-            RaycastHit hit;
-
-
-            //get layers "Preview" && selected object's layer and use as layermask
-
-            int layers = (1<<LayerMask.NameToLayer("Preview"));
-
-            layers |= (1 << LayerMask.NameToLayer(LayerMask.LayerToName(objToPlace.layer)));
-            layers = ~layers;
-            Debug.Log(layers);
-
-            if(!Physics.Raycast(ray,out hit,1000f,layers))
-            {
-                    if (Mathf.Abs(oldDelta.x - e.delta.x) >= 1)
-                    {
-                        if (e.delta.x < -0.1f)
-                        {
-                            mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-                            mouseStart.x = depth;
-                            mouseStart.y = tempMouseHeight;
-                            mouseStart.z = Mathf.Round(mouseStart.z);
-                            GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                            tempObj.transform.position = mouseStart - (tempObj.transform.forward * -1);
-                        }
-                        if (e.delta.x > 0.1f)
-                        {
-                            mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
-                            mouseStart.x = depth;
-                            mouseStart.y = tempMouseHeight;
-                            mouseStart.z = Mathf.Round(mouseStart.z);
-                            GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
-                            tempObj.transform.position = mouseStart + (tempObj.transform.forward * 1);
-                        }
-                    }
-            }
-                if (e.type == EventType.mouseUp)
-                {
-
-
-                }
-                    DragAndDrop.PrepareStartDrag();
-                
-        }
+        //find out why fast drag spreads more and slow drag puts nice together
+        //if (e.type == EventType.MouseDrag && previewObject != null)
+        //{
+        //    DragAndDrop.PrepareStartDrag();
+        //
+        //    DragAndDrop.StartDrag("TestDrag");
+        //    
+        //    e.Use();
+        //
+        //    if (e.delta.x < -0.1f)
+        //    {
+        //        mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), tempMouseHeight));
+        //        mouseStart.x = depth;
+        //        if (!Physics.SphereCast(sceneCam.ScreenPointToRay(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), tempMouseHeight)), 0.3f, 1000, mask))
+        //        {
+        //            GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+        //            Vector3 placePos = mouseStart + (tempObj.transform.forward * -0.1f);
+        //            tempObj.transform.position = placePos;
+        //        }
+        //
+        //        oldDelta = e.delta;
+        //
+        //    }
+        //    if (e.delta.x > 0.1f)
+        //    {
+        //        mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), tempMouseHeight));
+        //        mouseStart.x = depth;
+        //        if (!Physics.SphereCast(sceneCam.ScreenPointToRay(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), tempMouseHeight)), 0.3f, 1000, mask))
+        //        {
+        //            GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+        //            tempObj.transform.position = mouseStart + (tempObj.transform.forward * 0.1f);
+        //        }
+        //        oldDelta = e.delta;
+        //    }
+        //  
+        //    if (e.type == EventType.mouseUp)
+        //    {
+        //        DragAndDrop.PrepareStartDrag();
+        //    }
+        //        
+        //}
 
     }
 }

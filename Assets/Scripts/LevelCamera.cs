@@ -37,12 +37,12 @@ public class LevelCamera : MonoBehaviour {
 
     public void MoveForward()
     {
-        transform.position += Time.deltaTime * transform.forward;
+        transform.position += Time.deltaTime * transform.forward*2;
 
     }
     public void MoveBackward()
     {
-        transform.position -= Time.deltaTime * transform.forward;
+        transform.position -= Time.deltaTime * transform.forward*2;
     }
 
     bool SafeFrameCheck()
@@ -52,6 +52,11 @@ public class LevelCamera : MonoBehaviour {
         if (ratio > 0.2f)
         {
             MoveForward();
+            return false;
+        }
+        if (ratio < 0.19f)
+        {
+            MoveBackward();
             return false;
         }
         return true;
