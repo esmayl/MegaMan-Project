@@ -44,8 +44,67 @@ public class PlayerMovement : MonoBehaviour {
         
         activePower = powers[powerCounter];
         powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
+
+
+        anim.SetBool("Move", false);
+
 	}
-	
+
+    public virtual void Update()
+    {
+        if (velocity.y < -0.1f) { Debug.Log(velocity); }
+
+        //Makes player fall correctly when falling off a platform
+        //Fix canJump bug where grounded but canJump != true
+        if (timer > 0.5f)
+        {
+            if (Physics.Raycast(new Ray(transform.position, -transform.up), out hit, 1f))
+            {
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                {
+
+                    if (hit.distance > 0.7f && !jumping && canJump)
+                    {
+                        canJump = false;
+                        StopCoroutine("Jumping");
+
+                        StartCoroutine("Falling");
+                    }
+                    if (hit.distance < 0.5f && !canJump)
+                    {
+                        canJump = true;
+                        velocity.y = 0;
+                    }
+                }
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("LevelEnd"))
+                {
+
+                    if (hit.distance > 0.7f && !jumping && canJump)
+                    {
+
+                        canJump = false;
+                        StopCoroutine("Jumping");
+
+                        StartCoroutine("Falling");
+                    }
+                }
+            }
+            timer = 0;
+        }
+        else
+        {
+            timer += Time.deltaTime;
+        }
+
+        if (Input.GetButtonDown("Jump") && canJump)
+        {
+            anim.SetBool("Move", false);
+            StopCoroutine("Falling");
+            StartCoroutine("Jump");
+        }
+
+
+    }
 	public virtual void FixedUpdate () 
     {
         ChangeVelocity(0,velocity.y,velocity.z);
@@ -77,6 +136,7 @@ public class PlayerMovement : MonoBehaviour {
         {
             anim.SetBool("Move", true);
             anim.SetFloat("Speed", velocity.z);
+            velocity.y = 0;
         }
         else
         {
@@ -91,57 +151,10 @@ public class PlayerMovement : MonoBehaviour {
             transform.position = new Vector3(startDepth.x,transform.position.y,transform.position.z);
         }
 
-        //Makes player fall correctly when falling off a platform
-        //Fix canJump bug where grounded but canJump != true
-        if (timer > 0.5f)
-        {
-            if (Physics.Raycast(new Ray(transform.position, -transform.up), out hit))
-            {
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
-                {
-
-                    if (hit.distance > 0.7f && !jumping && canJump)
-                    {
-
-                        canJump = false;
-                        StopCoroutine("Jumping");
-
-                        StartCoroutine("Falling");
-                    }
-                    if (hit.distance < 0.25f && !falling && !canJump)
-                    {
-                        canJump = true;
-                        velocity.y = 0;
-                    }
-                }
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("LevelEnd"))
-                {
-
-                    if (hit.distance > 0.7f && !jumping && canJump)
-                    {
-
-                        canJump = false;
-                        StopCoroutine("Jumping");
-
-                        StartCoroutine("Falling");
-                    }
-                }
-            }
-            timer = 0;
-        }
-        else
-        {
-            timer += Time.deltaTime;
-        }
+        
 
         #endregion
 
-
-        if (Input.GetButtonDown("Jump") && canJump)
-        {
-            anim.SetBool("Move", false);
-            StartCoroutine("Jump");
-        }
 
         //Set Power
         if (Input.touchCount >= 1 || Input.GetMouseButtonDown(0))
@@ -181,7 +194,7 @@ public class PlayerMovement : MonoBehaviour {
 
         if (!jumping && !canJump)
         {
-            for (i = 0; i < 9; i++)
+            for (i = 0; i < 11; i++)
             {
                 falling = true;
                 if (i == 0)
@@ -199,7 +212,7 @@ public class PlayerMovement : MonoBehaviour {
                 }
                 if (i > 5)
                 {
-                    ChangeVelocity(velocity.x, -(numberArray[i] / 3), Input.GetAxis("Horizontal") * speed * 1.2f);
+                    ChangeVelocity(velocity.x, -(numberArray[i] / 5), Input.GetAxis("Horizontal") * speed * 1.2f);
                     controller.velocity = velocity;
                     yield return new WaitForSeconds(0.1f);
                 }
@@ -219,19 +232,16 @@ public class PlayerMovement : MonoBehaviour {
             a = 89;
             b = 55;
             anim.SetTrigger("Jump");
-            yield return new WaitForSeconds(0.1f); 
+            yield return new WaitForSeconds(0.05f); 
         }
 
         else { yield return null; }
 
-        
-        
 
-
-        while (i>1 && !canJump)
+        while (i>2 && !canJump)
         {
             jumping = true;
-            for (i = a; i >1 ; i = i - c)
+            for (i = a; i >2 ; i = i - c)
             {
                 c = a - b;
                 a = b;
@@ -239,13 +249,13 @@ public class PlayerMovement : MonoBehaviour {
 
                 if (c > 4)
                 {
-                    ChangeVelocity(velocity.x, c / 4, Input.GetAxis("Horizontal") * speed);
+                    ChangeVelocity(velocity.x, c / 5, Input.GetAxis("Horizontal") * speed);
                     controller.velocity = velocity;
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.15f);
                 }
                 if (c < 4)
                 {
-                    ChangeVelocity(velocity.x, c / 4, Input.GetAxis("Horizontal") * speed);
+                    ChangeVelocity(velocity.x, c / 5, Input.GetAxis("Horizontal") * speed);
                     controller.velocity = velocity;
                 }
             }
@@ -270,9 +280,6 @@ public class PlayerMovement : MonoBehaviour {
     {
         if (col.transform.gameObject.layer == LayerMask.NameToLayer("Ground") && !canJump)
         {
-            StopCoroutine("Falling");
-            falling = false;
-            velocity.y = 0;
             canJump = true;
             Debug.Log("On the ground");
         }
