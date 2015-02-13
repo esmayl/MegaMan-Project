@@ -49,11 +49,66 @@ public class PlayerMovement : MonoBehaviour {
 
     public virtual void Update()
     {
-        velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal")));
+        velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal")*speed));
         velocity.Normalize();
         velocity = transform.TransformDirection(velocity);
 
         velocity *= speed;
+
+        if (jumping)
+        {
+            Debug.Log(timer);
+            if (timer > 0.5f)
+            {
+                timer = 0;
+                jumping = false;
+            }
+            timer += Time.deltaTime * 3;
+        }
+
+        if (Input.GetButtonDown("Jump") && canJump && !jumping)
+        {
+            StartCoroutine("Jump");        
+            timer = 0.04f;
+        }
+
+        if(Input.GetButton("Jump") && canJump && !jumping)
+        {
+            StartCoroutine("Jump");
+        }
+
+        
+        if (Input.GetButtonUp("Jump"))
+        {
+            Debug.Log(timer+" Let Go");
+        
+            timer = 0;
+            jumping = false;
+        }
+        
+        if (!canJump)
+        {
+            if (!jumping)
+            {
+                gravity += Physics.gravity * Time.deltaTime * 3;
+            }
+        }
+        else if(jumping)
+        {
+            if (timer < 0.1f) { gravity.y = 0.04f * 180f; }
+            else
+            {
+                gravity.y = timer * 180f;
+            }
+        }
+        else
+        {
+            gravity = Vector3.zero;
+        }
+        velocity += gravity;
+        velocity.x = 0;
+        controller.Move(velocity * Time.deltaTime);
+        canJump = controller.isGrounded;
 
 
         if (canJump)
@@ -73,49 +128,18 @@ public class PlayerMovement : MonoBehaviour {
 
         }
 
-        if(Input.GetButton("Jump") && canJump && !jumping)
-        {
-            Debug.Log(timer);
-            anim.SetBool("Move", false);
-            jumping = true;
-            timer += Time.deltaTime*2;
-        }
-        else if(timer > 0.04f)
-        {
-            timer = 0;
-            jumping = false;
-            canJump = false;
-        }
-        
-        if (Input.GetButtonUp("Jump"))
-        {
-            Debug.Log(timer+" Let Go");
-        
-            timer = 0;
-            jumping = false;
-        }
-        
-        if (!canJump)
-        {
-            if (!jumping)
-            {
-                gravity += Physics.gravity * Time.deltaTime * 3;
-            }
-        }
-        else if(jumping)
-        {
-            gravity.y = timer * 120f;
-        }
-        else
-        {
-            gravity = Vector3.zero;
-        }
-        velocity += gravity;
-        velocity.x = 0;
-        controller.Move(velocity * Time.deltaTime);
-        canJump = controller.isGrounded;
 
     }
+
+
+    public void Jump()
+    {
+        anim.SetTrigger("Jump");
+        anim.SetBool("Move", false);
+
+        jumping = true;
+    }
+
 	public virtual void FixedUpdate () 
     {
 
