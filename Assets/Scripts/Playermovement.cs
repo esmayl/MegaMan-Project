@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CharacterController))]
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -16,13 +16,14 @@ public class PlayerMovement : MonoBehaviour {
     internal Animator anim;
 
     //movement variables
-    internal Rigidbody controller;
+    internal CharacterController controller;
     internal Vector3 startDepth;
-    float speed = 3;
+    float speed = 3f;
 
     //jump variables
     internal bool canJump = true;
-    static Vector3 velocity;
+    Vector3 gravity = Vector3.zero;
+    Vector3 velocity = Vector3.zero;
     RaycastHit hit;
     int[] numberArray = new int[15];
     int a = 89, b = 55, c = 0, i = 1;
@@ -38,110 +39,85 @@ public class PlayerMovement : MonoBehaviour {
         timer = 0;
         startDepth = transform.position;
         anim = GetComponent<Animator>();
-		controller = GetComponent<Rigidbody>();
+		controller = GetComponent<CharacterController>();
         
         anim.SetBool("Move", true);
         
         activePower = powers[powerCounter];
         powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
-
-
-        anim.SetBool("Move", false);
-
 	}
 
     public virtual void Update()
     {
-        if (velocity.y < -0.1f) { Debug.Log(velocity); }
+        velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal")));
+        velocity.Normalize();
+        velocity = transform.TransformDirection(velocity);
 
-        //Makes player fall correctly when falling off a platform
-        //Fix canJump bug where grounded but canJump != true
-        if (timer > 0.5f)
+        velocity *= speed;
+
+
+        if (canJump)
         {
-            if (Physics.Raycast(new Ray(transform.position, -transform.up), out hit, 1f))
-            {
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
-                {
-
-                    if (hit.distance > 0.7f && !jumping && canJump)
-                    {
-                        canJump = false;
-                        StopCoroutine("Jumping");
-
-                        StartCoroutine("Falling");
-                    }
-                    if (hit.distance < 0.5f && !canJump)
-                    {
-                        canJump = true;
-                        velocity.y = 0;
-                    }
-                }
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("LevelEnd"))
-                {
-
-                    if (hit.distance > 0.7f && !jumping && canJump)
-                    {
-
-                        canJump = false;
-                        StopCoroutine("Jumping");
-
-                        StartCoroutine("Falling");
-                    }
-                }
-            }
-            timer = 0;
+            anim.SetFloat("Speed", Mathf.Abs(Input.GetAxis("Horizontal")));
         }
-        else
-        {
-            timer += Time.deltaTime;
-        }
-
-        if (Input.GetButtonDown("Jump") && canJump)
-        {
-            anim.SetBool("Move", false);
-            StopCoroutine("Falling");
-            StartCoroutine("Jump");
-        }
-
-
-    }
-	public virtual void FixedUpdate () 
-    {
-        ChangeVelocity(0,velocity.y,velocity.z);
-        
-        //Set movement speed & direction
         if (Input.GetAxis("Horizontal")>0.1f || Input.GetAxis("Horizontal")< -0.1f)
         {
             if (Input.GetAxis("Horizontal") > 0.1f)
             {
                 transform.LookAt(transform.position + Camera.main.transform.right);
-                ChangeVelocity(velocity.x,velocity.y,1 * speed*1.2f);
             }
             if (Input.GetAxis("Horizontal") < -0.1f)
             {
                 transform.LookAt(transform.position - Camera.main.transform.right);
-                ChangeVelocity(velocity.x, velocity.y, -1 * speed*1.2f);
             }
 
         }
-        else
-        {
-            ChangeVelocity(velocity.x, velocity.y, 0);
 
+        if(Input.GetButton("Jump") && canJump && !jumping)
+        {
+            Debug.Log(timer);
             anim.SetBool("Move", false);
+            jumping = true;
+            timer += Time.deltaTime*2;
         }
-
-        //Enable / dissable running animation
-        if (canJump)
+        else if(timer > 0.04f)
         {
-            anim.SetBool("Move", true);
-            anim.SetFloat("Speed", velocity.z);
-            velocity.y = 0;
+            timer = 0;
+            jumping = false;
+            canJump = false;
+        }
+        
+        if (Input.GetButtonUp("Jump"))
+        {
+            Debug.Log(timer+" Let Go");
+        
+            timer = 0;
+            jumping = false;
+        }
+        
+        if (!canJump)
+        {
+            if (!jumping)
+            {
+                gravity += Physics.gravity * Time.deltaTime * 3;
+            }
+        }
+        else if(jumping)
+        {
+            gravity.y = timer * 120f;
         }
         else
         {
-            anim.SetFloat("Speed", 0);
+            gravity = Vector3.zero;
         }
+        velocity += gravity;
+        velocity.x = 0;
+        controller.Move(velocity * Time.deltaTime);
+        canJump = controller.isGrounded;
+
+    }
+	public virtual void FixedUpdate () 
+    {
 
         #region Fixes
 
@@ -154,7 +130,6 @@ public class PlayerMovement : MonoBehaviour {
         
 
         #endregion
-
 
         //Set Power
         if (Input.touchCount >= 1 || Input.GetMouseButtonDown(0))
@@ -185,85 +160,90 @@ public class PlayerMovement : MonoBehaviour {
         }
 
 
-        controller.velocity = velocity;
+        //controller.velocity = velocity;
 	}
 
-    public IEnumerator Falling()
-    {
-        if (falling) { yield return null; }
+    //public IEnumerator Jump()
+    //{
+    //    canJump = false;
+    //
+    //    if (jumping) { yield return null; }
+    //
+    //    if (i > 2 && !falling) 
+    //    {
+    //        a = 89;
+    //        b = 55;
+    //        anim.SetTrigger("Jump");
+    //        yield return new WaitForSeconds(0.05f); 
+    //    }
+    //    else { yield return null; }
+    //
+    //
+    //    while (i>2 && !canJump)
+    //    {
+    //        jumping = true;
+    //        for (i = a; i >2 ; i = i - c)
+    //        {
+    //            c = a - b;
+    //            a = b;
+    //            b = c;
+    //
+    //            if (c > 4)
+    //            {
+    //                ChangeVelocity(velocity.x, c /5 , Input.GetAxis("Horizontal") * speed);
+    //                controller.Move(velocity.y * transform.up);
+    //
+    //                yield return new WaitForSeconds(0.15f);
+    //            }
+    //            if (c < 4)
+    //            {
+    //                ChangeVelocity(velocity.x, c /5, Input.GetAxis("Horizontal") * speed);
+    //                controller.Move(velocity.y * transform.up);
+    //
+    //            }
+    //        }
+    //    }
+    //    jumping = false;
+    //    //StartCoroutine("Falling");
+    //    yield return null;       
+    //}
+    //
+    //public IEnumerator Falling()
+    //{
+    //    if (falling || jumping || falling && jumping) { yield return null; }
+    //
+    //    if (!jumping && !canJump)
+    //    {
+    //        for (i = 0; i < 11; i++)
+    //        {
+    //            falling = true;
+    //            if (i == 0)
+    //            {
+    //                numberArray[i] = i;
+    //            }
+    //
+    //            if (i == 1)
+    //            {
+    //                numberArray[i] = i;
+    //            }
+    //            if (i >= 2)
+    //            {
+    //                numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
+    //            }
+    //            if (i > 5)
+    //            {
+    //                ChangeVelocity(velocity.x, -(numberArray[i]/5 ), Input.GetAxis("Horizontal") * speed * 1.2f);
+    //                controller.Move(velocity.y * transform.up);
+    //
+    //                yield return new WaitForSeconds(0.1f);
+    //            }
+    //        }
+    //    }
+    //        falling = false;
+    //        //canJump = true;
+    //        yield return null;
+    //}
 
-        if (!jumping && !canJump)
-        {
-            for (i = 0; i < 11; i++)
-            {
-                falling = true;
-                if (i == 0)
-                {
-                    numberArray[i] = i;
-                }
-
-                if (i == 1)
-                {
-                    numberArray[i] = i;
-                }
-                if (i >= 2)
-                {
-                    numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
-                }
-                if (i > 5)
-                {
-                    ChangeVelocity(velocity.x, -(numberArray[i] / 5), Input.GetAxis("Horizontal") * speed * 1.2f);
-                    controller.velocity = velocity;
-                    yield return new WaitForSeconds(0.1f);
-                }
-            }
-        }
-
-            falling = false;
-            yield return null;
-    }
-
-    public IEnumerator Jump()
-    {
-        if (jumping) { yield return null; }
-            canJump = false;
-        if (i > 1 && !falling) 
-        {
-            a = 89;
-            b = 55;
-            anim.SetTrigger("Jump");
-            yield return new WaitForSeconds(0.05f); 
-        }
-
-        else { yield return null; }
-
-
-        while (i>2 && !canJump)
-        {
-            jumping = true;
-            for (i = a; i >2 ; i = i - c)
-            {
-                c = a - b;
-                a = b;
-                b = c;
-
-                if (c > 4)
-                {
-                    ChangeVelocity(velocity.x, c / 5, Input.GetAxis("Horizontal") * speed);
-                    controller.velocity = velocity;
-                    yield return new WaitForSeconds(0.15f);
-                }
-                if (c < 4)
-                {
-                    ChangeVelocity(velocity.x, c / 5, Input.GetAxis("Horizontal") * speed);
-                    controller.velocity = velocity;
-                }
-            }
-        }
-        jumping = false;
-        StartCoroutine("Falling");
-        yield return null;       
-    }
 
     public void SummonBoss()
     {
@@ -274,19 +254,5 @@ public class PlayerMovement : MonoBehaviour {
     {
         powerCounter++;
         if (powerCounter >= powers.Length) { powerCounter = 0;}
-    }
-
-    public void OnCollisionEnter(Collision col)
-    {
-        if (col.transform.gameObject.layer == LayerMask.NameToLayer("Ground") && !canJump)
-        {
-            canJump = true;
-            Debug.Log("On the ground");
-        }
-    }
-
-    public static void ChangeVelocity(float x, float y, float z)
-    {
-        velocity = new Vector3(x, y, z);
     }
 }
