@@ -99,6 +99,7 @@ public class PlayerMovement : MonoBehaviour {
             else
             {
                 gravity.y = timer * 180f;
+                if (gravity.y > 1f) { gravity.y = 1; }
             }
         }
         else
