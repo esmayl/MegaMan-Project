@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour {
     internal GameObject powerHolder;
 
     
-    internal int hp = 100;
+    internal float hp = 100;
     internal Animator anim;
 
     //movement variables
@@ -47,8 +47,10 @@ public class PlayerMovement : MonoBehaviour {
         powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
 	}
 
+
     public virtual void Update()
     {
+
         velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal")*speed));
         velocity.Normalize();
         velocity = transform.TransformDirection(velocity);
@@ -57,7 +59,6 @@ public class PlayerMovement : MonoBehaviour {
 
         if (jumping)
         {
-            Debug.Log(timer);
             if (timer > 0.9f)
             {
                 timer = 0;
@@ -80,7 +81,6 @@ public class PlayerMovement : MonoBehaviour {
         
         if (Input.GetButtonUp("Jump"))
         {
-            Debug.Log(timer+" Let Go");
         
             timer = 0;
             jumping = false;
@@ -188,88 +188,25 @@ public class PlayerMovement : MonoBehaviour {
         //controller.velocity = velocity;
 	}
 
-    //public IEnumerator Jump()
-    //{
-    //    canJump = false;
-    //
-    //    if (jumping) { yield return null; }
-    //
-    //    if (i > 2 && !falling) 
-    //    {
-    //        a = 89;
-    //        b = 55;
-    //        anim.SetTrigger("Jump");
-    //        yield return new WaitForSeconds(0.05f); 
-    //    }
-    //    else { yield return null; }
-    //
-    //
-    //    while (i>2 && !canJump)
-    //    {
-    //        jumping = true;
-    //        for (i = a; i >2 ; i = i - c)
-    //        {
-    //            c = a - b;
-    //            a = b;
-    //            b = c;
-    //
-    //            if (c > 4)
-    //            {
-    //                ChangeVelocity(velocity.x, c /5 , Input.GetAxis("Horizontal") * speed);
-    //                controller.Move(velocity.y * transform.up);
-    //
-    //                yield return new WaitForSeconds(0.15f);
-    //            }
-    //            if (c < 4)
-    //            {
-    //                ChangeVelocity(velocity.x, c /5, Input.GetAxis("Horizontal") * speed);
-    //                controller.Move(velocity.y * transform.up);
-    //
-    //            }
-    //        }
-    //    }
-    //    jumping = false;
-    //    //StartCoroutine("Falling");
-    //    yield return null;       
-    //}
-    //
-    //public IEnumerator Falling()
-    //{
-    //    if (falling || jumping || falling && jumping) { yield return null; }
-    //
-    //    if (!jumping && !canJump)
-    //    {
-    //        for (i = 0; i < 11; i++)
-    //        {
-    //            falling = true;
-    //            if (i == 0)
-    //            {
-    //                numberArray[i] = i;
-    //            }
-    //
-    //            if (i == 1)
-    //            {
-    //                numberArray[i] = i;
-    //            }
-    //            if (i >= 2)
-    //            {
-    //                numberArray[i] = numberArray[i - 1] + numberArray[i - 2];
-    //            }
-    //            if (i > 5)
-    //            {
-    //                ChangeVelocity(velocity.x, -(numberArray[i]/5 ), Input.GetAxis("Horizontal") * speed * 1.2f);
-    //                controller.Move(velocity.y * transform.up);
-    //
-    //                yield return new WaitForSeconds(0.1f);
-    //            }
-    //        }
-    //    }
-    //        falling = false;
-    //        //canJump = true;
-    //        yield return null;
-    //}
+    public IEnumerator Death()
+    {
+        //spawn particle system
+        //emit 10 or so ominidirectional with huge particles
+        yield return new WaitForSeconds(0.1f);
+        Time.timeScale = 0;
+        Debug.Log(gameObject.name);
+        gameObject.SetActive(false);
+        Time.timeScale = 1f;
+        Application.LoadLevel(Application.loadedLevel);
+    }
 
+    public void TakeDamage(float dmg)
+    {
+        hp -= dmg;
+        if (hp < 1) { StartCoroutine("Death"); }
 
+    }
+    
     public void SummonBoss()
     {
 
