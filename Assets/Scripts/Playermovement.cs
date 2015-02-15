@@ -58,18 +58,18 @@ public class PlayerMovement : MonoBehaviour {
         if (jumping)
         {
             Debug.Log(timer);
-            if (timer > 0.5f)
+            if (timer > 0.9f)
             {
                 timer = 0;
                 jumping = false;
             }
-            timer += Time.deltaTime * 3;
+            timer += Time.deltaTime * 4;
         }
 
         if (Input.GetButtonDown("Jump") && canJump && !jumping)
         {
             StartCoroutine("Jump");        
-            timer = 0.04f;
+            timer = 0.06f;
         }
 
         if(Input.GetButton("Jump") && canJump && !jumping)
@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour {
             else
             {
                 gravity.y = timer * 180f;
-                if (gravity.y > 1f) { gravity.y = 1; }
+                if (gravity.y > 3f) { gravity.y = 3f; }
             }
         }
         else

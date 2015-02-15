@@ -49,7 +49,7 @@ public class LevelCamera : MonoBehaviour {
     {
         Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
         float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
-        if (ratio > 0.2f)
+        if (ratio > 0.6f)
         {
             MoveForward();
             return false;
