@@ -1,13 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Pathfinding;
 
+[RequireComponent(typeof(Rigidbody),typeof(Seeker))]
 public class Enemy : MonoBehaviour {
 
     public GameObject player;
     public float hp = 100;
+    public int walkDistance = 5;
     public float speed = 3;
     public float meleeDamage = 4f;
+
+    //Pathfinding variables
+
+    Seeker seeker;
+    Rigidbody controller;
+    bool endReached;
+    Vector3 walkDirection;
+
+    Path path;
+    
+    int currentWaypoint = 0;
+
+    public virtual void Start()
+    {
+        seeker = GetComponent<Seeker>();
+        controller = rigidbody;
+
+        seeker.StartPath(transform.position,transform.position+(transform.forward * walkDistance),PathCalculationsComplete);
+    }
+
 
 	public virtual void Update () {
 
@@ -15,13 +38,51 @@ public class Enemy : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+        if (path == null){return;}
 
-        if (player != null)
+        //Pathfinding 
+        if (endReached)
         {
-            MoveTo(player.transform);
+            controller.velocity = Vector3.zero;
+            //add random number generator to select next action
+
+        }
+
+
+        if (currentWaypoint >= path.vectorPath.Count)
+        {
+            if (endReached) { return; }
+            endReached = true;
+        }
+        if (currentWaypoint < path.vectorPath.Count)
+        {
+            walkDirection = path.vectorPath[currentWaypoint] - transform.position;
+            walkDirection.Normalize();
+            walkDirection.x = 0;
+        }
+
+        //Actually moves the enemy
+        if (!endReached)
+        {
+            controller.velocity = walkDirection * speed;
+            if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < 1)
+            {
+                currentWaypoint++;
+            }
         }
 
 	}
+
+    public void PathCalculationsComplete(Path p)
+    {
+        if (!p.error)
+        {
+            endReached = false;
+            Debug.Log(p.vectorPath.Count);
+            path = p;
+            currentWaypoint = 0;
+        }
+    }
 
     public void TakeDamage(float damage)
     {
@@ -41,6 +102,15 @@ public class Enemy : MonoBehaviour {
     {
         while (true)
         {
+            if (endReached)
+            {
+                transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z) - transform.forward * walkDistance);
+                seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete);
+            }
+            else { seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete); }
+
+
+
             Collider[] hits;
             hits = Physics.OverlapSphere(transform.position, Radius);
             if (hits.Length > 0)
@@ -55,7 +125,6 @@ public class Enemy : MonoBehaviour {
                         {
                             player.gameObject.GetComponent<PlayerMovement>().TakeDamage(meleeDamage);
                         }
-                        MoveTo(player.transform);
                         
                         Debug.Log("" + h);
                     }
@@ -63,6 +132,7 @@ public class Enemy : MonoBehaviour {
             }
             else
             {
+
                 player = null;
             }
             yield return new WaitForSeconds(1f);

@@ -5,8 +5,10 @@ public class WeakEnemy : Enemy {
 
     public float range = 1;
 
-    void Start()
+    public override void Start()
     {
+        base.Start();
+
         range = transform.GetChild(0).GetComponent<MeshFilter>().mesh.bounds.extents.y*range;
         StartCoroutine("DetectPlayer", range);
     }
