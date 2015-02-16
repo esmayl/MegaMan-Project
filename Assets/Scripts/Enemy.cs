@@ -59,6 +59,11 @@ public class Enemy : MonoBehaviour {
             walkDirection = path.vectorPath[currentWaypoint] - transform.position;
             walkDirection.Normalize();
             walkDirection.x = 0;
+
+        }
+        if (walkDirection.y > 0.1f)
+        {
+            endReached = true;
         }
 
         //Actually moves the enemy
@@ -78,7 +83,6 @@ public class Enemy : MonoBehaviour {
         if (!p.error)
         {
             endReached = false;
-            Debug.Log(p.vectorPath.Count);
             path = p;
             currentWaypoint = 0;
         }

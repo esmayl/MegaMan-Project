@@ -37,11 +37,6 @@ public class IceSpike : Bullet {
     public override void OnCollisionEnter(Collision coll)
     {
         base.OnCollisionEnter(coll);
-        if (coll.gameObject.tag == "Enemy")
-        {
-            coll.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
-            Destroy(gameObject);
-        }
         if (coll.gameObject.tag == "Ground")
         {
             attackHolder.SendMessage("DoAttack",transform.position);
