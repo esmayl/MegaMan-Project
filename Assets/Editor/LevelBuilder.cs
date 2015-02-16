@@ -21,7 +21,7 @@ public class LevelBuilder : EditorWindow  {
     Material selectedMaterial = new Material(Shader.Find("Diffuse"));
 
     Vector3 spawnPos;
-    float depth = -0.5f;
+    float depth = -3f;
     Vector3 mousePos;
 
     int buttonWidth =110;
