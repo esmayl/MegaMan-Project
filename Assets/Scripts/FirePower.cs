@@ -7,16 +7,29 @@ public class FirePower : Power {
 
     public override void Attack(Transform player)
     {
+
         Transform gun;
         gun = player.GetComponent<PlayerMovement>().gun.transform;
 
-        Vector3 tempPos = gun.transform.position + (gun.transform.forward + gun.transform.up);
+        Vector3 tempPos = player.position + gun.localPosition;
         tempPos.x = player.position.x;
-        instance = Instantiate(fireObject, tempPos, Quaternion.identity) as GameObject;
-        instance.transform.rotation = Quaternion.AngleAxis(-45, transform.right);
 
-        instance.rigidbody.AddForce(instance.transform.forward*speed);
-        instance.GetComponent<FireBomb>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
-        instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
+        if (tempPos.y < player.position.y)
+        {
+            Debug.Log(tempPos);
+            return;
+        }
+        else
+        {
+            instance = Instantiate(fireObject) as GameObject;
+            instance.transform.position = tempPos;
+
+            instance.transform.LookAt(gun.transform.position + (gun.transform.forward * 1.2f));
+
+            instance.rigidbody.AddForce(instance.transform.forward * speed);
+
+            instance.GetComponent<FireBomb>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
+            instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
+        }
     }
 }

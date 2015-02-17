@@ -23,10 +23,12 @@ public class LevelBuilder : EditorWindow  {
     Vector3 spawnPos;
     float depth = -3f;
     Vector3 mousePos;
+    Vector3 tempScale = Vector3.one;
 
     int buttonWidth =110;
     string groupName ="";
     bool canGroup = false;
+    bool hazard = false;
     bool snap = false;
     static LevelBuilder window;
     List<GameObject> instanceList = new List<GameObject>();
@@ -124,6 +126,7 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(platforms[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if(previewObject != null){DestroyImmediate(previewObject);}
+                                if (hazard) { hazard = false; }
 
                                 SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
 
@@ -137,7 +140,6 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject.transform.position = spawnPos;
                                 previewObject.renderer.material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
-
 
                                 Selection.activeGameObject = previewObject;                
                                 preview = true;
@@ -155,6 +157,7 @@ public class LevelBuilder : EditorWindow  {
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
 
+                                hazard = true;
                                 SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
 
                                 objToPlace = hazards[i];
@@ -165,9 +168,9 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.renderer.material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
+                                tempScale = previewObject.transform.localScale;
 
                                 Selection.activeGameObject = previewObject;
                                 preview = true;
@@ -187,6 +190,7 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(enemies[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+                                if (hazard) { hazard = false; }
 
                                 SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
 
@@ -217,6 +221,7 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(bosses[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+                                if (hazard) { hazard = false; }
                                 
                                 SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
 
@@ -249,6 +254,7 @@ public class LevelBuilder : EditorWindow  {
                             if (GUILayout.Button(doors[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
                             {
                                 if (previewObject != null) { DestroyImmediate(previewObject); }
+                                if (hazard) { hazard = false; }
 
                                 SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
 
@@ -312,6 +318,17 @@ public class LevelBuilder : EditorWindow  {
                             EditorGUILayout.EndScrollView();
                 EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginVertical(GUILayout.Height(150));
+
+        if (hazard && previewObject != null)
+        {
+            tempScale = EditorGUILayout.Vector3Field("Scale", tempScale);
+            tempScale.x = previewObject.transform.localScale.x;
+            tempScale.y = (float)Math.Round(tempScale.y,1);
+            tempScale.z = (float)Math.Round(tempScale.z,1);
+            previewObject.transform.localScale = tempScale;
+        }
+        EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(GUILayout.Height(150));
         if (canGroup)
@@ -348,6 +365,7 @@ public class LevelBuilder : EditorWindow  {
             window.Repaint();
             DestroyImmediate(previewObject);
             preview = false;
+            hazard = false;
         }
         
         if (previewObject != null)
@@ -392,7 +410,8 @@ public class LevelBuilder : EditorWindow  {
                     {
                         GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                         tempObj.transform.position = mousePos;
-                        tempObj.renderer.material = selectedMaterial;
+                        if (!hazard) { tempObj.renderer.material = selectedMaterial; }
+                        tempObj.transform.localScale = previewObject.transform.localScale;
                         tempObj = null;
                     }
                 }
@@ -400,7 +419,8 @@ public class LevelBuilder : EditorWindow  {
                 {
                     GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                     tempObj.transform.position = mousePos;
-                    tempObj.transform.GetChild(0).renderer.material = selectedMaterial;
+                    if (!hazard) { tempObj.transform.GetChild(0).renderer.material = selectedMaterial; }
+                    tempObj.transform.localScale = previewObject.transform.localScale;
                     tempObj = null;
                 }
 

@@ -14,6 +14,8 @@ public class Buster : Power {
     {
         if (value >= 2) { value = 2f; }
 
+        value = 0.5f;
+
         Transform gun;
         gun = player.GetComponent<PlayerMovement>().gun.transform;
 
@@ -21,11 +23,9 @@ public class Buster : Power {
         instance.transform.localScale = new Vector3(value, value, value);
 
         instance.rigidbody.useGravity = false;
-        instance.rigidbody.AddForce(player.transform.forward * speed);
+        instance.rigidbody.velocity = player.transform.forward * speed;
         instance.SendMessage("AddChargeDmg", value);
         instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
         instance.GetComponent<Bullet>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
-
-        value = 0.1f;
     }
 }

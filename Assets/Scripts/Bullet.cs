@@ -19,14 +19,15 @@ public class Bullet : MonoBehaviour {
 
     public virtual void OnCollisionEnter(Collision coll)
     {
-        
+
         if (coll.gameObject.tag == "Enemy")
         {
-            particle.enableEmission = true;
-            particle.Emit(100);
-            coll.gameObject.SendMessage("TakeDamage",baseDamage * weaponDamage);
-            Destroy(this.gameObject,0.2f);
-            particle.enableEmission = false;
+            coll.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
+            Destroy(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -39,6 +40,7 @@ public class Bullet : MonoBehaviour {
     public void AddChargeDmg(float chargeDmg)
     {
         weaponDamage += chargeDmg*10;
+        transform.localScale = new Vector3(chargeDmg, chargeDmg, chargeDmg);
     }
 
 }

@@ -22,12 +22,12 @@ public class PlayerMovement : MonoBehaviour {
 
     //jump variables
     internal bool canJump = true;
+    internal bool jumping = false;
     Vector3 gravity = Vector3.zero;
     Vector3 velocity = Vector3.zero;
     RaycastHit hit;
     int[] numberArray = new int[15];
     int a = 89, b = 55, c = 0, i = 1;
-    bool jumping = false;
     bool falling = false;
     float timer;
     
@@ -50,6 +50,7 @@ public class PlayerMovement : MonoBehaviour {
 
     public virtual void Update()
     {
+        canJump = controller.isGrounded;
 
         velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal")*speed));
         velocity.Normalize();
@@ -109,7 +110,6 @@ public class PlayerMovement : MonoBehaviour {
         velocity += gravity;
         velocity.x = 0;
         controller.Move(velocity * Time.deltaTime);
-        canJump = controller.isGrounded;
 
 
         if (canJump)
@@ -132,15 +132,6 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
-
-    public void Jump()
-    {
-        anim.SetTrigger("Jump");
-        anim.SetBool("Move", false);
-
-        jumping = true;
-    }
-
 	public virtual void FixedUpdate () 
     {
 
@@ -156,20 +147,10 @@ public class PlayerMovement : MonoBehaviour {
 
         #endregion
 
-        //Set Power
-        if (Input.touchCount >= 1 || Input.GetMouseButtonDown(0))
-        {
-            activePower = powers[powerCounter];
-            if (powerHolder.name != activePower.name)
-            {
-                Destroy(powerHolder);
-                powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
-            }
-        }
-
         //Fire power
         if (Input.GetMouseButtonUp(0))
 		{
+
             activePower.Attack(transform);
 		}
         
@@ -183,11 +164,16 @@ public class PlayerMovement : MonoBehaviour {
         {
             SummonBoss();
         }
-
-
-        //controller.velocity = velocity;
 	}
 
+    public void Jump()
+    {
+        anim.SetTrigger("Jump");
+        anim.SetBool("Move", false);
+
+        jumping = true;
+    }
+    
     public IEnumerator Death()
     {
         //spawn particle system
@@ -216,5 +202,14 @@ public class PlayerMovement : MonoBehaviour {
     {
         powerCounter++;
         if (powerCounter >= powers.Length) { powerCounter = 0;}
+        activePower = powers[powerCounter];
+       
+        //Set Power
+
+        if (powerHolder.name != activePower.name)
+        {
+            Destroy(powerHolder);
+            powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
+        }
     }
 }

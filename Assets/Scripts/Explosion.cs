@@ -22,5 +22,6 @@ public class Explosion : Bullet
         {
             other.SendMessage("TakeDamage",(baseDamage *weaponDamage));
         }
+        Destroy(gameObject, 0.1f);
     }
 }

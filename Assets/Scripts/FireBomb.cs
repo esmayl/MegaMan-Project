@@ -5,7 +5,6 @@ public class FireBomb : Bullet {
 
     GameObject explosion;
     float fireCounter;
-    public float maxTimealive = 5;
 
 	// Use this for initialization
 	void Start () {
