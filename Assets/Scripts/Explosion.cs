@@ -20,8 +20,8 @@ public class Explosion : Bullet
     {
         if (other.layer == LayerMask.NameToLayer("Enemy"))
         {
-            other.SendMessage("TakeDamage",(baseDamage *weaponDamage));
+            Debug.LogError("object dmg - 10 = " +other.name);
+            other.SendMessage("TakeDamage",baseDamage *weaponDamage);
         }
-        Destroy(gameObject, 0.1f);
     }
 }

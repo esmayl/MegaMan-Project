@@ -17,4 +17,19 @@ public class FireBomb : Bullet {
         explosion = Instantiate(particle, transform.position, Quaternion.identity) as GameObject;
         Destroy(gameObject);
     }
+
+    public override void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.tag == "Enemy")
+        {
+            col.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
+            Destroy(gameObject);
+        }
+        if (col.gameObject.tag == "Ground")
+        {
+            explosion = Instantiate(particle, transform.position, Quaternion.identity) as GameObject;
+            Destroy(gameObject);
+        }
+
+    }
 }

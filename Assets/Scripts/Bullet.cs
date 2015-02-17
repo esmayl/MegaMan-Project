@@ -25,7 +25,7 @@ public class Bullet : MonoBehaviour {
             coll.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
             Destroy(gameObject);
         }
-        else
+        if(coll.gameObject.tag == "Ground")
         {
             Destroy(gameObject);
         }
