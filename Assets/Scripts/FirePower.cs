@@ -11,10 +11,10 @@ public class FirePower : Power {
         Transform gun;
         gun = player.GetComponent<PlayerMovement>().gun.transform;
 
-        Vector3 tempPos = player.position + gun.localPosition;
+        Vector3 tempPos = gun.position+gun.transform.forward;
         tempPos.x = player.position.x;
 
-        if (tempPos.y < player.position.y)
+        if (tempPos.y < player.position.y )
         {
             Debug.Log(tempPos);
             return;

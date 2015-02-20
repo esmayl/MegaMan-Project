@@ -2,7 +2,11 @@ fileFormatVersion: 2
 guid: 8b15aca3347181f49b32dde0ab1e64ce
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - armorTexture: {instanceID: 0}
+  - attackTexture: {instanceID: 0}
+  - gun: {fileID: 100004, guid: 2bdc564ab52ffc147a0e39200c93c8aa, type: 2}
+  - bullet: {fileID: 100000, guid: d1b8e2db562cd4646accd14d9d4d7cf1, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

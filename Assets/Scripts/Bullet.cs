@@ -4,7 +4,6 @@ using System.Collections;
 public class Bullet : MonoBehaviour {
 
     public ParticleSystem particle;
-    public Transform player;
     internal float baseDamage=1f;
     internal float weaponDamage = 1f;
     internal Transform attackHolder;
@@ -12,8 +11,6 @@ public class Bullet : MonoBehaviour {
 
     void Start()
     {
-        particle = transform.GetChild(0).GetComponent<ParticleSystem>();
-        particle.enableEmission = false;
         StartCoroutine("DeathTimer");
     }
 
@@ -40,7 +37,6 @@ public class Bullet : MonoBehaviour {
     public void AddChargeDmg(float chargeDmg)
     {
         weaponDamage += chargeDmg*10;
-        transform.localScale = new Vector3(chargeDmg, chargeDmg, chargeDmg);
     }
 
 }

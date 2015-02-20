@@ -4,81 +4,115 @@ using System.Collections;
 public class IcePower : Power {
 
     public GameObject iceObj;
+    Vector3 iceDirection;
     float iceSpeed = 200;
-    GameObject iceParent;
     float iceStartDistance = 1.3f;
-    float iceSpacing = 0.5f;
+    float iceSpacing = 0.25f;
     float iceAmount = 10f;
     float iceDistance = 1f;
     float snowTextureAmount;
     RaycastHit hit;
+    Vector3 icePos;
+    bool attacking = false;
 
 	public override void Start () 
     {
         base.Start();
 
-        iceParent = transform.gameObject;
-        iceParent.name = "IcePower";
+        powerHolder = transform.gameObject;
+        powerHolder.name = "IcePower";
+
 	}
 	
     public override void Attack(Transform player)
     {
-        Transform gun;
-        gun = player.GetComponent<PlayerMovement>().gun.transform;
+        if (player.GetComponent<PlayerMovement>())
+        {
+            gun = player.GetComponent<PlayerMovement>().gun;
+            iceDirection = gun.transform.forward;
 
-        instance = Instantiate(iceObj, gun.transform.position+gun.transform.forward, Quaternion.identity) as GameObject;
-        instance.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-        instance.transform.rotation = Quaternion.AngleAxis(90, transform.right);
+        }
+        else
+        {
+            return;
+        }
 
-        instance.rigidbody.useGravity = true;
-        instance.rigidbody.AddForce(player.transform.forward * iceSpeed);
-        instance.GetComponent<IceSpike>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
-        instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
+        if (!instance)
+        {
 
+            instance = Instantiate(iceObj, gun.transform.position - iceDirection / 1.2f, Quaternion.identity) as GameObject;
+            instance.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            instance.transform.LookAt(gun.transform.position + (iceDirection * 1.1f));
+            instance.rigidbody.useGravity = true;
+            instance.rigidbody.AddForce(instance.transform.forward * iceSpeed);
+            instance.GetComponent<IceSpike>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
+            instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
+
+
+        }
+        else
+        {
+            Destroy(instance);
+
+            instance = Instantiate(iceObj, gun.transform.position - iceDirection / 1.2f, Quaternion.identity) as GameObject;
+            instance.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            instance.transform.LookAt(gun.transform.position + (iceDirection * 1.1f));
+            instance.rigidbody.useGravity = true;
+            instance.rigidbody.AddForce(instance.transform.forward * iceSpeed);
+            instance.GetComponent<IceSpike>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
+            instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
+        }
     }
 
+
+    //bugged, goes through walls
     public IEnumerator DoAttack(Vector3 pos)
     {
-        foreach (Transform t in iceParent.transform)
+        if (attacking) { yield return null; }
+        if (powerHolder.transform.childCount > 0)
         {
-            Destroy(t.gameObject);
-        }
-        iceParent.transform.position = pos;
-
-        Vector3 tempPos = pos + (iceStartDistance / 2) * transform.forward;
-
-        if (Physics.Raycast(new Ray(tempPos, new Vector3(0, -1, 0)), out hit, LayerMask.NameToLayer("Projectile")))
-        {
-            if (hit.transform.tag == "Ground")
+            foreach (Transform t in powerHolder.transform)
             {
-                tempPos.y = hit.point.y;
+                if (t.collider.isTrigger)
+                {
+                    Destroy(t.gameObject);
+                }
             }
         }
+        attacking = true;
+        iceDirection = gun.transform.forward;
 
+        icePos = pos + (iceStartDistance / 2) * iceDirection;
         float counter = 0;
+        if (Physics.Raycast(new Ray(icePos + transform.up , new Vector3(0, -1, 0)), out hit))
+        {                      
+            if (hit.transform.tag == "Ground")
+            {
+                icePos.y = hit.point.y;
+                Debug.Log(icePos.y);
+            }
 
+        }
         for (int i = 0; i < iceAmount; i++)
         {
-
             if (i % 2 == 1)
             {
-
-                tempPos = pos + (iceStartDistance / 2 + counter) * transform.forward;
 
                 float scale = counter * 0.1f;
                 if (scale >= 0.3f)
                 {
                     scale = 0.3f;
                 }
-
-                Vector3 location = tempPos + iceSpacing * transform.forward;
-                location.y = tempPos.y;
+  
+                Vector3 location = (icePos + (iceStartDistance / 2 + counter) * iceDirection) + iceSpacing * iceDirection;
+                location.y = hit.point.y;
+                            
                 InstantiateIce(location, new Vector3(scale, scale, scale), -10f, -40f);
+                
             }
 
             else if (i % 2 == 0)
             {
-                tempPos = pos + (iceStartDistance / 2 + counter) * transform.forward;
                 
                 float scale = counter * 0.1f;
 
@@ -87,17 +121,17 @@ public class IcePower : Power {
                     scale = 0.3f;
                 }
 
-                Vector3 location = tempPos + iceSpacing * transform.forward;
-                location.y = tempPos.y;
+ 
+                Vector3 location = (icePos + (iceStartDistance / 2 + counter) * iceDirection) + iceSpacing * iceDirection;
+                location.y = hit.point.y;
+                            
                 InstantiateIce(location, new Vector3(scale, scale, scale), 10f, 40f);
+
             }
             counter++;
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForFixedUpdate();
         }
-
-        iceParent.transform.rotation = transform.rotation;
-
-        Time.timeScale = 1f;
+        attacking = false;
     }
 
     void InstantiateIce(Vector3 position, Vector3 scale, float min, float max)
@@ -105,20 +139,24 @@ public class IcePower : Power {
         GameObject obj = Instantiate(iceObj) as GameObject;
 
         ShapeIce(obj,scale);
-            obj.transform.position = position-transform.up/2;
+            obj.transform.position = position;
+            obj.transform.LookAt(obj.transform.position+obj.transform.up);
             obj.transform.Rotate(transform.forward, Random.Range(min, max));
             obj.transform.Rotate(transform.right, Random.Range(0, 45));
-        obj.transform.parent = iceParent.transform;
-        obj.transform.SendMessage("TurnOffLight");
+        obj.transform.parent = powerHolder.transform;
         obj.transform.collider.isTrigger = true;
-        obj.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-        obj.GetComponent<IceSpike>().player = transform;
-        
+        Destroy(obj.rigidbody);       
     }
 
     public void ShapeIce(GameObject ga ,Vector3 scale)
     {
         ga.SendMessage("ShapeIce", scale);
         
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(icePos + transform.up * 1.5f, -transform.up);
     }
 }

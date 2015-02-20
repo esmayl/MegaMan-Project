@@ -9,7 +9,7 @@ public class LevelCamera : MonoBehaviour {
     public Image barForeground;
     public Image chargeBar;
 
-
+    float moveSpeed = 2.5f;
     Image[] hp = new Image[9];
     Image[] charges = new Image[9];
     RaycastHit hit;
@@ -31,6 +31,7 @@ public class LevelCamera : MonoBehaviour {
                 hp[i] = temp;
             }
         }
+
     }
 
     void RemoveHP()
@@ -44,7 +45,7 @@ public class LevelCamera : MonoBehaviour {
         }
     }
 
-    void LateUpdate()
+    void Update()
     {
         SafeFrameCheck();
         RemoveHP();
@@ -53,47 +54,48 @@ public class LevelCamera : MonoBehaviour {
 
     public void MoveForward()
     {
-        transform.position += Time.deltaTime * transform.forward*2;
-
+        transform.position += Time.deltaTime * transform.forward*moveSpeed;
     }
     public void MoveBackward()
     {
-        transform.position -= Time.deltaTime * transform.forward*2;
+        transform.position -= Time.deltaTime * transform.forward * moveSpeed;
     }
     public void MoveDown()
     {
-        transform.position += Time.deltaTime * -transform.up * 2;
+        transform.position -= Time.deltaTime * transform.up * moveSpeed;
     }
     public void MoveUp()
     {
-        transform.position += Time.deltaTime * transform.up * 2;
+        transform.position += Time.deltaTime * transform.up * moveSpeed;
     }
 
     bool SafeFrameCheck()
     {
-        Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
-        float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
-        float ratioY = screenPos.y / transform.GetChild(0).camera.pixelHeight;
-        if (ratio > 0.6f)
-        {
-            MoveForward();
-            return false;
-        }
-        if (ratio < 0.19f)
-        {
-            MoveBackward();
-            return false;
-        }
-        if (ratioY > 0.75f)
-        {
-            MoveUp();
-            return false;
-        }
-        if (ratioY < 0.15f)
-        {
-            MoveDown();
-            return false;
-        }
-        return true;
+
+            Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
+            float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
+            float ratioY = screenPos.y / transform.GetChild(0).camera.pixelHeight;
+            if (ratio > 0.6f)
+            {
+                MoveForward();
+                return false;
+            }
+            if (ratio < 0.19f)
+            {
+                MoveBackward();
+                return false;
+            }
+            if (ratioY > 0.75f)
+            {
+                MoveUp();
+                return false;
+            }
+            if (ratioY < 0.35f)
+            {
+                MoveDown();
+                return false;
+            }
+            return true;
+
     }
 }

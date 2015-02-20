@@ -5,9 +5,12 @@ public class Power : MonoBehaviour {
 
     public Texture2D armorTexture;
     public Texture2D attackTexture;
+    public GameObject gun;
+    public ParticleSystem shotParticle;
     public int speed;
     internal float value;
     internal GameObject instance;
+    internal GameObject powerHolder;    
 
     float strength = 1;
     float mpCost = 10;

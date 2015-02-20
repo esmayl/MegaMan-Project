@@ -15,6 +15,9 @@ public class PlayerMovement : MonoBehaviour {
     internal float hp = 100;
     internal Animator anim;
 
+    //climbing variables
+    internal bool climbing = false;
+
     //movement variables
     internal CharacterController controller;
     internal Vector3 startDepth;
@@ -50,67 +53,36 @@ public class PlayerMovement : MonoBehaviour {
 
     public virtual void Update()
     {
-        canJump = controller.isGrounded;
 
-        velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal")*speed));
-        velocity.Normalize();
-        velocity = transform.TransformDirection(velocity);
-
-        velocity *= speed;
-
-        if (jumping)
+        if (climbing)
         {
-            if (timer > 0.9f)
+            if (Input.GetAxis("Vertical")>0.1f)
             {
-                timer = 0;
-                jumping = false;
+                gravity.y = 3;
             }
-            timer += Time.deltaTime * 4;
-        }
-
-        if (Input.GetButtonDown("Jump") && canJump && !jumping)
-        {
-            StartCoroutine("Jump");        
-            timer = 0.06f;
-        }
-
-        if(Input.GetButton("Jump") && canJump && !jumping)
-        {
-            StartCoroutine("Jump");
-        }
-
-        
-        if (Input.GetButtonUp("Jump"))
-        {
-        
-            timer = 0;
-            jumping = false;
-        }
-        
-        if (!canJump)
-        {
-            if (!jumping)
-            {
-                gravity += Physics.gravity * Time.deltaTime * 3;
-            }
-        }
-        else if(jumping)
-        {
-            if (timer < 0.1f) { gravity.y = 0.04f * 180f; }
             else
             {
-                gravity.y = timer * 180f;
-                if (gravity.y > 3f) { gravity.y = 3f; }
+                gravity = Vector3.zero;
             }
+
         }
         else
         {
-            gravity = Vector3.zero;
+            canJump = controller.isGrounded;
         }
-        velocity += gravity;
-        velocity.x = 0;
-        controller.Move(velocity * Time.deltaTime);
 
+        //Fire power
+        if (Input.GetMouseButtonUp(0))
+        {
+
+            activePower.Attack(transform);
+        }
+
+        //Switch to next power
+        if (Input.GetMouseButtonDown(1))
+        {
+            SwitchPower();
+        }
 
         if (canJump)
         {
@@ -135,6 +107,7 @@ public class PlayerMovement : MonoBehaviour {
 	public virtual void FixedUpdate () 
     {
 
+
         #region Fixes
 
         //Sets player x position back to begin x position when changed
@@ -147,18 +120,64 @@ public class PlayerMovement : MonoBehaviour {
 
         #endregion
 
-        //Fire power
-        if (Input.GetMouseButtonUp(0))
-		{
+        velocity = new Vector3(0, 0, Mathf.Abs(Input.GetAxis("Horizontal") * speed));
+        velocity.Normalize();
+        velocity = transform.TransformDirection(velocity);
 
-            activePower.Attack(transform);
-		}
-        
-        //Switch to next power
-        if (Input.GetMouseButtonDown(1))
+        velocity *= speed;
+
+        if (jumping)
         {
-            SwitchPower();
+            if (timer > 0.9f)
+            {
+                timer = 0;
+                jumping = false;
+            }
+            timer += Time.deltaTime * 4;
         }
+
+        if (Input.GetButtonDown("Jump") && canJump && !jumping)
+        {
+            StartCoroutine("Jump");
+            timer = 0.06f;
+        }
+
+        if (Input.GetButton("Jump") && canJump && !jumping)
+        {
+            StartCoroutine("Jump");
+        }
+
+
+        if (Input.GetButtonUp("Jump"))
+        {
+
+            timer = 0;
+            jumping = false;
+        }
+
+        if (!canJump)
+        {
+            if (!jumping && !climbing)
+            {
+                gravity += Physics.gravity * Time.deltaTime * 3;
+            }
+        }
+        else if (jumping)
+        {
+            if (timer < 0.1f) { gravity.y = 0.04f * 180f; }
+            else
+            {
+                gravity.y = timer * 180f;
+                if (gravity.y > 3f) { gravity.y = 3f; }
+            }
+        }
+        else
+        {
+            gravity = Vector3.zero;
+        }
+        velocity += gravity;
+        velocity.x = 0;
+        controller.Move(velocity * Time.deltaTime);
 
         if (substance.GetProceduralFloat("Snow") >= 1)
         {
@@ -210,6 +229,7 @@ public class PlayerMovement : MonoBehaviour {
         {
             Destroy(powerHolder);
             powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
+            powerHolder.GetComponent<Power>().gun = gun;
         }
     }
 }

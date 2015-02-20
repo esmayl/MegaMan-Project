@@ -124,6 +124,10 @@ ModelImporter:
       L UpperArm/Bip01 L Forearm/Bip01 L Hand
     - Bip01/Bip01 Pelvis/Bip01 Spine/Bip01 Spine1/Bip01 Neck/Bip01 R Clavicle/Bip01
       R UpperArm/Bip01 R Forearm/Bip01 R Hand
+    - Bip01/Bip01 Pelvis/Bip01 Spine/Bip01 Spine1/Bip01 Neck/Bip01 R Clavicle/Bip01
+      R UpperArm
+    - Bip01/Bip01 Pelvis/Bip01 Spine/Bip01 Spine1/Bip01 Neck/Bip01 L Clavicle/Bip01
+      L UpperArm
     clipAnimations:
     - serializedVersion: 16
       name: tPose

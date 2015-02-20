@@ -20,7 +20,6 @@ public class Buster : Power {
         gun = player.GetComponent<PlayerMovement>().gun.transform;
 
         instance = Instantiate(bullet, gun.transform.position + gun.transform.forward, Quaternion.identity) as GameObject;
-        instance.transform.localScale = new Vector3(value, value, value);
 
         instance.rigidbody.useGravity = false;
         instance.rigidbody.velocity = player.transform.forward * speed;

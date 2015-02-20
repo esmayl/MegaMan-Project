@@ -5,11 +5,16 @@ ModelImporter:
   fileIDToRecycleName:
     100000: default
     100002: //RootNode
+    100004: IceSpike:Mesh
     400000: default
     400002: //RootNode
+    400004: IceSpike:Mesh
     2300000: default
+    2300002: IceSpike:Mesh
     3300000: default
+    3300002: IceSpike:Mesh
     4300000: default
+    4300002: IceSpike:Mesh
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -62,6 +67,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   additionalBone: 0
   userData: 
