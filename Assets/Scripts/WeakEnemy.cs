@@ -19,7 +19,14 @@ public class WeakEnemy : Enemy {
 
     public void OnDrawGizmosSelected ()
     {
-        Gizmos.color = Color.gray;
+        Gizmos.color = new Color(255,255,255,0.5f);
+
         Gizmos.DrawSphere(transform.position, range);
+
+        Gizmos.DrawLine(transform.position,transform.position+transform.forward*walkDistance);
+        Gizmos.DrawLine(transform.position + transform.up * 0.5f, transform.position + transform.up * 0.5f + transform.forward * walkDistance);
+        Gizmos.DrawLine(transform.position + transform.right * 0.5f, transform.position + transform.right * 0.5f + transform.forward * walkDistance);
+        Gizmos.DrawLine(transform.position + -transform.up * 0.5f, transform.position + -transform.up * 0.5f + transform.forward * walkDistance);
+
     }
 }

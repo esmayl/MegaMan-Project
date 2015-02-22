@@ -22,6 +22,7 @@ public class IcePower : Power {
         powerHolder = transform.gameObject;
         powerHolder.name = "IcePower";
 
+
 	}
 	
     public override void Attack(Transform player)

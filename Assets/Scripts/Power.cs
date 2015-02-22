@@ -11,9 +11,9 @@ public class Power : MonoBehaviour {
     internal float value;
     internal GameObject instance;
     internal GameObject powerHolder;    
+    public int mpCost = 0;
 
     float strength = 1;
-    float mpCost = 10;
 
 	// Use this for initialization
 	public virtual void Start () {

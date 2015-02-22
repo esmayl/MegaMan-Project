@@ -11,7 +11,7 @@ public class LevelCamera : MonoBehaviour {
 
     float moveSpeed = 2.5f;
     Image[] hp = new Image[9];
-    Image[] charges = new Image[9];
+    Image[] mp = new Image[9];
     RaycastHit hit;
 
     void Start()
@@ -20,17 +20,34 @@ public class LevelCamera : MonoBehaviour {
         {
             for (int i = 1; i < 9; i++)
             {
-                if (i == 1) { hp[0] = barForeground; }
+                if (i == 1) { hp[0] = (Image)Image.Instantiate(barForeground); hp[0].rectTransform.position = barForeground.rectTransform.position; }
                 Image temp = (Image)Image.Instantiate(barForeground);
                 temp.rectTransform.SetParent(hpBar.transform,false);
-                temp.rectTransform.position = barForeground.rectTransform.position;
                 temp.rectTransform.localScale = new Vector3(1, 1, 1);
                 temp.rectTransform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
-                Vector3 tempLocation = temp.rectTransform.position+(new Vector3(0,1,0)*(0.047f * i));
+                Vector3 tempLocation = temp.rectTransform.position+(transform.up*(0.1125f * i));
                 temp.rectTransform.position = tempLocation;
                 hp[i] = temp;
             }
+            
         }
+
+        if(player.GetComponent<PlayerMovement>().mp >0)
+        {
+            for (int i = 1; i < 9; i++)
+            {
+                if (i == 1) { mp[0] = (Image)Image.Instantiate(barForeground); mp[0].rectTransform.position = barForeground.rectTransform.position; }
+                Image temp = (Image)Image.Instantiate(barForeground);
+                temp.rectTransform.SetParent(chargeBar.transform, false);
+                temp.rectTransform.localScale = new Vector3(1, 1, 1);
+                temp.rectTransform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+                Vector3 tempLocation = temp.rectTransform.position + (transform.up * (0.1125f * i));
+                temp.rectTransform.position = tempLocation;
+                mp[i] = temp;
+            }
+        }
+
+        barForeground.gameObject.SetActive(false);
 
     }
 
@@ -45,11 +62,23 @@ public class LevelCamera : MonoBehaviour {
         }
     }
 
+    void RemoveMP()
+    {
+        if (player.GetComponent<PlayerMovement>().mp <= 0) { return; }
+        if (player.GetComponent<PlayerMovement>().mp < 100)
+        {
+            for (int i = (int)player.GetComponent<PlayerMovement>().mp / 10; i < 9; i++)
+            {
+                Destroy(mp[i]);
+            }
+        }
+    }
+
     void Update()
     {
         SafeFrameCheck();
         RemoveHP();
-
+        RemoveMP();
     }
 
     public void MoveForward()
@@ -80,7 +109,7 @@ public class LevelCamera : MonoBehaviour {
                 MoveForward();
                 return false;
             }
-            if (ratio < 0.19f)
+            if (ratio < 0.5f)
             {
                 MoveBackward();
                 return false;

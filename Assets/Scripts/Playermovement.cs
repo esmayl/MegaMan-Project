@@ -12,7 +12,8 @@ public class PlayerMovement : MonoBehaviour {
     internal GameObject powerHolder;
 
     
-    internal float hp = 100;
+    internal int hp = 100;
+    internal int mp = 100;
     internal Animator anim;
 
     //climbing variables
@@ -21,7 +22,7 @@ public class PlayerMovement : MonoBehaviour {
     //movement variables
     internal CharacterController controller;
     internal Vector3 startDepth;
-    float speed = 3f;
+    public float speed = 5.5f;
 
     //jump variables
     internal bool canJump = true;
@@ -74,8 +75,15 @@ public class PlayerMovement : MonoBehaviour {
         //Fire power
         if (Input.GetMouseButtonUp(0))
         {
-
-            activePower.Attack(transform);
+            if (UseMP(activePower.mpCost))
+            {
+                Debug.Log(activePower.mpCost + " mp - " + mp);
+                activePower.Attack(transform);
+            }
+            else
+            {
+                Debug.Log("No mana to use skill");
+            }
         }
 
         //Switch to next power
@@ -205,11 +213,21 @@ public class PlayerMovement : MonoBehaviour {
         Application.LoadLevel(Application.loadedLevel);
     }
 
-    public void TakeDamage(float dmg)
+    public void TakeDamage(int dmg)
     {
         hp -= dmg;
         if (hp < 1) { StartCoroutine("Death"); }
 
+    }
+
+    public bool UseMP(int amountUsed)
+    {
+        if (amountUsed == 0) { return true;}
+        if (mp < 0) { Debug.Log("NoMana"); return false; }
+
+        mp -= amountUsed;
+        if (mp < 0) { Debug.Log("NoMana"); return false; }       
+        return true;
     }
     
     public void SummonBoss()

@@ -10,14 +10,14 @@ public class Enemy : MonoBehaviour {
     public float hp = 100;
     public int walkDistance = 5;
     public float speed = 3;
-    public float meleeDamage = 4f;
+    public int meleeDamage = 4;
+    internal Vector3 walkDirection;
 
     //Pathfinding variables
 
     Seeker seeker;
     Rigidbody controller;
     bool endReached;
-    Vector3 walkDirection;
 
     Path path;
     
@@ -41,12 +41,7 @@ public class Enemy : MonoBehaviour {
         if (path == null){return;}
 
         //Pathfinding 
-        if (endReached)
-        {
-            controller.velocity = Vector3.zero;
-            //add random number generator to select next action
-
-        }
+        
 
 
         if (currentWaypoint >= path.vectorPath.Count)
@@ -61,11 +56,29 @@ public class Enemy : MonoBehaviour {
             walkDirection.x = 0;
 
         }
-        if (walkDirection.y > 0.1f)
+        if (walkDirection.y > 0.2f)
         {
             endReached = true;
         }
 
+        if (endReached)
+        {
+            //add random number generator to select next action
+            transform.LookAt(transform.position - transform.forward);
+
+
+            //if (currentWaypoint <= 0)
+            //{
+            //    endReached = false;
+            //    controller.velocity = Vector3.zero;
+            //}
+            if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < 1)
+            {
+                controller.velocity = new Vector3(0,walkDirection.y,Mathf.Abs(walkDirection.z * speed));
+                currentWaypoint--;
+            }
+
+        }
         //Actually moves the enemy
         if (!endReached)
         {
@@ -75,6 +88,7 @@ public class Enemy : MonoBehaviour {
                 currentWaypoint++;
             }
         }
+
 
 	}
 
@@ -108,10 +122,9 @@ public class Enemy : MonoBehaviour {
         {
             if (endReached)
             {
-                transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z) - transform.forward * walkDistance);
-                seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete);
+                //seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete);
             }
-            else { seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete); }
+            //else { seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete); }
 
 
 

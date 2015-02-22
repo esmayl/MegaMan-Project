@@ -5,6 +5,11 @@ public class FirePower : Power {
 
     public GameObject fireObject;
 
+    public override void Start()
+    {
+        base.Start();
+    }
+
     public override void Attack(Transform player)
     {
 
