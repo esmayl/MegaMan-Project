@@ -884,6 +884,7 @@ MonoBehaviour:
   - {fileID: 11459460, guid: 045ad2936e7f57842b3b34ad2f2a1c16, type: 2}
   activePower: {fileID: 11459460, guid: 045ad2936e7f57842b3b34ad2f2a1c16, type: 2}
   gun: {fileID: 100004}
+  mp: 1000
   speed: 5.5
 --- !u!137 &13730716
 SkinnedMeshRenderer:

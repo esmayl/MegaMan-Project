@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour {
 
     
     internal int hp = 100;
-    internal int mp = 100;
+    public int mp = 100;
     internal Animator anim;
 
     //climbing variables

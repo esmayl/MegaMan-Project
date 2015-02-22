@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour {
     internal float baseDamage=1f;
     internal float weaponDamage = 1f;
     internal Transform attackHolder;
+    internal float lifeTime = 5;
 
 
     void Start()
@@ -30,7 +31,7 @@ public class Bullet : MonoBehaviour {
 
     public virtual IEnumerator DeathTimer()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(lifeTime);
         Destroy(gameObject);
     }
 

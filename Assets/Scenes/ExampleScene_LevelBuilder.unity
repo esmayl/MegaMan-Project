@@ -437,7 +437,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4851645
 Transform:
   m_ObjectHideFlags: 0
@@ -6308,7 +6308,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &408193352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9015,7 +9015,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 7.9692359, y: 1.01432502, z: 1.00310802}
+  m_Size: {x: 7.9692359, y: 1.17999995, z: 1.05999994}
   m_Center: {x: -.0136649609, y: .019786492, z: 0}
 --- !u!23 &568092422
 Renderer:
@@ -16739,7 +16739,7 @@ Prefab:
       objectReference: {fileID: 1588660468}
     - target: {fileID: 147238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: df16e9b9387162544ab89ce57992b788, type: 2}
@@ -21312,7 +21312,7 @@ Prefab:
       objectReference: {fileID: 1588660468}
     - target: {fileID: 147238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11447240, guid: df16e9b9387162544ab89ce57992b788, type: 2}
       propertyPath: range
@@ -21448,7 +21448,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 147238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: df16e9b9387162544ab89ce57992b788, type: 2}
@@ -25786,7 +25786,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1858719405
 Transform:
   m_ObjectHideFlags: 0
@@ -29214,6 +29214,14 @@ Prefab:
     - target: {fileID: 165514, guid: f5e98938bd448d14490b712d3b5eabc8, type: 2}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 6506890, guid: f5e98938bd448d14490b712d3b5eabc8, type: 2}
+      propertyPath: m_Size.y
+      value: 1.17999995
+      objectReference: {fileID: 0}
+    - target: {fileID: 6506890, guid: f5e98938bd448d14490b712d3b5eabc8, type: 2}
+      propertyPath: m_Size.z
+      value: 1.05999994
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f5e98938bd448d14490b712d3b5eabc8, type: 2}

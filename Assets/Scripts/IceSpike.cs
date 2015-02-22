@@ -8,6 +8,7 @@ public class IceSpike : Bullet {
 
     void Start()
     {
+        lifeTime =2;
         weaponDamage = 3;    
     }
 
@@ -31,17 +32,45 @@ public class IceSpike : Bullet {
     {
         if (coll.gameObject.tag == "Ground")
         {
-            attackHolder.SendMessage("DoAttack",transform.position);
+            attackHolder.SendMessage("DoAttack",coll.contacts[0].point-transform.forward);
+            Destroy(gameObject);
+        }
+        if (coll.gameObject.tag == "Enemy")
+        {
+            attackHolder.SendMessage("DoAttack", coll.transform.position - transform.forward);
             Destroy(gameObject);
         }
     }
 
     public void OnTriggerEnter(Collider coll)
     {
+        StartCoroutine("DeathTimer");
+
         if (coll.tag == "Enemy")
         {
             coll.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
         }
+    }
+
+
+    public override IEnumerator DeathTimer()
+    {
+        MeshRenderer[] meshes = new MeshRenderer[transform.GetComponentsInChildren<MeshRenderer>().Length]; 
+        meshes = transform.GetComponentsInChildren<MeshRenderer>() as MeshRenderer[];
+
+        if (meshes.Length > 0)
+        {
+            foreach (MeshRenderer r in meshes)
+            {
+                while (r.material.color.a > 0)
+                {
+                    r.material.color -= new Color(0, 0, 0, Time.deltaTime);
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+        }
+        base.DeathTimer();
+        yield return null;
     }
 
     public void ShapeIce(Vector3 scale)

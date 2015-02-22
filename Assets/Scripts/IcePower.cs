@@ -85,7 +85,7 @@ public class IcePower : Power {
 
         icePos = pos + (iceStartDistance / 2) * iceDirection;
         float counter = 0;
-        if (Physics.Raycast(new Ray(icePos + transform.up , new Vector3(0, -1, 0)), out hit))
+        if (Physics.Raycast(new Ray(icePos + transform.up , new Vector3(0, -1, 0)), out hit,LayerMask.NameToLayer("Ground")))
         {                      
             if (hit.transform.tag == "Ground")
             {
@@ -107,8 +107,9 @@ public class IcePower : Power {
   
                 Vector3 location = (icePos + (iceStartDistance / 2 + counter) * iceDirection) + iceSpacing * iceDirection;
                 location.y = hit.point.y;
+                pos.y = hit.point.y;
                             
-                InstantiateIce(location, new Vector3(scale, scale, scale), -10f, -40f);
+                InstantiateIce(iceDirection,pos, new Vector3(scale, scale, scale), -5f, -10f);
                 
             }
 
@@ -125,8 +126,9 @@ public class IcePower : Power {
  
                 Vector3 location = (icePos + (iceStartDistance / 2 + counter) * iceDirection) + iceSpacing * iceDirection;
                 location.y = hit.point.y;
+
                             
-                InstantiateIce(location, new Vector3(scale, scale, scale), 10f, 40f);
+                InstantiateIce(iceDirection,pos, new Vector3(scale, scale, scale), 5f, 10f);
 
             }
             counter++;
@@ -135,15 +137,21 @@ public class IcePower : Power {
         attacking = false;
     }
 
-    void InstantiateIce(Vector3 position, Vector3 scale, float min, float max)
+    void InstantiateIce(Vector3 direction , Vector3 position, Vector3 scale, float min, float max)
     {
         GameObject obj = Instantiate(iceObj) as GameObject;
 
         ShapeIce(obj,scale);
             obj.transform.position = position;
-            obj.transform.LookAt(obj.transform.position+obj.transform.up);
             obj.transform.Rotate(transform.forward, Random.Range(min, max));
-            obj.transform.Rotate(transform.right, Random.Range(0, 45));
+            if (direction.z >0.1f)
+            {
+                obj.transform.Rotate(transform.right, Random.Range(0, -90));
+            }
+            else
+            {
+                obj.transform.Rotate(transform.right, Random.Range(-180, -90));
+            }
         obj.transform.parent = powerHolder.transform;
         obj.transform.collider.isTrigger = true;
         Destroy(obj.rigidbody);       
