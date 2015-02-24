@@ -3,7 +3,6 @@ using System.Collections;
 
 public class WeakEnemy : Enemy {
 
-    public float range = 1;
 
     public override void Start()
     {
@@ -23,10 +22,18 @@ public class WeakEnemy : Enemy {
 
         Gizmos.DrawSphere(transform.position, range);
 
+        Gizmos.color = Color.green;
+
         Gizmos.DrawLine(transform.position,transform.position+transform.forward*walkDistance);
         Gizmos.DrawLine(transform.position + transform.up * 0.5f, transform.position + transform.up * 0.5f + transform.forward * walkDistance);
         Gizmos.DrawLine(transform.position + transform.right * 0.5f, transform.position + transform.right * 0.5f + transform.forward * walkDistance);
         Gizmos.DrawLine(transform.position + -transform.up * 0.5f, transform.position + -transform.up * 0.5f + transform.forward * walkDistance);
+
+        Gizmos.color = Color.red;
+        foreach (Vector3 v in wayPoints)
+        {
+            Gizmos.DrawSphere(v, 0.5f);
+        }
 
     }
 }

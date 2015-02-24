@@ -7,6 +7,7 @@ using System;
 
 public class LevelBuilder : EditorWindow  {
 
+    public static GameObject[] decorations;
     public static GameObject[] platforms;
     public static GameObject[] hazards;
     public static GameObject[] doors;
@@ -34,9 +35,9 @@ public class LevelBuilder : EditorWindow  {
     List<GameObject> instanceList = new List<GameObject>();
     int mask;
 
-    
 
 
+    Vector2 decorationsScroll;
     Vector2 platformScroll;
     Vector2 hazardScroll;
     Vector2 doorScroll;
@@ -98,22 +99,38 @@ public class LevelBuilder : EditorWindow  {
             materials[i] = tempObjArray[i] as Material;
         }
 
+        tempObjArray = Resources.LoadAll("Decoration");
+        decorations = new GameObject[tempObjArray.Length];
+        for (int i = 0; i < tempObjArray.Length; i++)
+        {
+            decorations[i] = (GameObject)tempObjArray[i];
+        }
+
         window = (LevelBuilder)EditorWindow.GetWindow(typeof(LevelBuilder));
         window.minSize = new Vector2(410, 350);
-        window.maxSize = new Vector2(410, 350);
         window.title = "LevelBuilder";
 
         sceneCam = GameObject.Find("SceneCamera").camera;
 
 	}
 
+
+    static bool IsMouseOver() 
+    {
+        return Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
+    }
+
     void OnGUI()
     {
+        Event e = Event.current;
+
         if (preview)
         {
             GUILayout.Label("Press Left-Mouse to place object, press Escape to leave\n To group select multiple objects and select this window", GUILayout.Width(400));
             snap = GUILayout.Toggle(snap, "Snapping");
         }
+
+
 
         EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical(GUILayout.Height(220));
@@ -171,6 +188,35 @@ public class LevelBuilder : EditorWindow  {
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
                                 tempScale = previewObject.transform.localScale;
+
+                                Selection.activeGameObject = previewObject;
+                                preview = true;
+                            }
+                        }
+                        EditorGUILayout.EndScrollView();
+
+                        EditorGUILayout.Space();
+                        GUILayout.Label("Decorations");
+                        decorationsScroll = EditorGUILayout.BeginScrollView(decorationsScroll, GUILayout.Width(130), GUILayout.Height(100));
+                        for (int i = 0; i < decorations.Length; i++)
+                        {
+                            if (GUILayout.Button(decorations[i].name, GUILayout.Width(buttonWidth), GUILayout.Height(20)))
+                            {
+                                if (previewObject != null) { DestroyImmediate(previewObject); }
+                                if (hazard) { hazard = false; }
+
+                                SceneView.lastActiveSceneView.LookAt(SceneView.lastActiveSceneView.pivot, Quaternion.LookRotation(-Vector3.right));
+
+                                objToPlace = decorations[i];
+                                Selection.activeObject = SceneView.currentDrawingSceneView;
+                                spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
+                                spawnPos.x = depth;
+                                spawnPos.y = Mathf.Round(spawnPos.y);
+                                spawnPos.z = Mathf.Round(spawnPos.z);
+                                previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
+                                previewObject.transform.position = spawnPos;
+                                previewObject.renderer.material = selectedMaterial;
+                                previewObject.layer = LayerMask.NameToLayer("Preview");
 
                                 Selection.activeGameObject = previewObject;
                                 preview = true;
@@ -266,7 +312,6 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.renderer.material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
                                 Selection.activeGameObject = previewObject;
@@ -319,8 +364,18 @@ public class LevelBuilder : EditorWindow  {
                 EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginVertical(GUILayout.Height(150));
+        if (Selection.activeGameObject) 
+        {
 
-        if (hazard && previewObject != null)
+            GameObject rotateAble = Selection.activeGameObject;
+            float tempFloat = EditorGUILayout.FloatField("Rotation", rotateAble.transform.rotation.x);
+            float calcFloat = tempFloat - rotateAble.transform.rotation.x;
+            window.Repaint();            
+
+            rotateAble.transform.Rotate(rotateAble.transform.right, calcFloat);
+
+    }
+        if (hazard && previewObject)
         {
             tempScale = EditorGUILayout.Vector3Field("Scale", tempScale);
             tempScale.x = previewObject.transform.localScale.x;
@@ -350,6 +405,13 @@ public class LevelBuilder : EditorWindow  {
         }
 
         EditorGUILayout.EndVertical();
+        if (e.keyCode == KeyCode.Escape && preview)
+        {
+            window.Repaint();
+            DestroyImmediate(previewObject);
+            preview = false;
+            hazard = false;
+        }
     }
 
     void OnSceneGUI(SceneView sceneView)
@@ -378,8 +440,8 @@ public class LevelBuilder : EditorWindow  {
             mousePos.z = (float)Math.Round(mousePos.z,1);
             previewObject.transform.position = mousePos;
         }
-
-        if (Selection.gameObjects.Length > 1) { canGroup = true; }
+        if (Selection.activeGameObject) { window.Repaint(); }
+        if (Selection.gameObjects.Length > 1) {canGroup = true;}
         if (Selection.gameObjects.Length <= 1) { canGroup = false; }
 
 
@@ -412,6 +474,7 @@ public class LevelBuilder : EditorWindow  {
                         tempObj.transform.position = mousePos;
                         if (!hazard) { tempObj.renderer.material = selectedMaterial; }
                         tempObj.transform.localScale = previewObject.transform.localScale;
+                        tempObj.isStatic = true;
                         tempObj = null;
                     }
                 }

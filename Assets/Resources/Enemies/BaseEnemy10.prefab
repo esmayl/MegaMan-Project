@@ -11,7 +11,6 @@ GameObject:
   - 114: {fileID: 11447240}
   - 54: {fileID: 5464508}
   - 65: {fileID: 6520342}
-  - 114: {fileID: 11487122}
   m_Layer: 10
   m_Name: BaseEnemy10
   m_TagString: Enemy
@@ -42,8 +41,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 147238}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: 1.13, z: 1.47000003}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 4.13663059e-07}
+  m_LocalPosition: {x: -3, y: 3.04999995, z: 8.10000038}
   m_LocalScale: {x: .5, y: .5, z: .5}
   m_Children:
   - {fileID: 447240}
@@ -126,40 +125,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f20b2ea35841ff4f81f0c21953900cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 1
+  damageDealer: {fileID: 100000, guid: e1942449d45a94c44bf9f8715690b554, type: 2}
+  currentState: 1
   player: {fileID: 0}
   hp: 10
   walkDistance: 3
   speed: 3
   meleeDamage: 4
+  rangeToStop: .5
   range: 5.19000006
---- !u!114 &11487122
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 147238}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  drawGizmos: 1
-  detailedGizmos: 0
-  saveGetNearestHints: 1
-  startEndModifier:
-    priority: 1
-    addPoints: 0
-    exactStartPoint: 3
-    exactEndPoint: 3
-    useRaycasting: 0
-    mask:
-      serializedVersion: 2
-      m_Bits: 4294967295
-    useGraphRaycasting: 0
-  traversableTags:
-    tagsChange: -1
-    tagsSet: -1
-  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

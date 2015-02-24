@@ -4,6 +4,7 @@ using System.Collections;
 public class IcePower : Power {
 
     public GameObject iceObj;
+    public GameObject iceExplosion;
     Vector3 iceDirection;
     float iceSpeed = 200;
     float iceStartDistance = 1.3f;
@@ -13,7 +14,7 @@ public class IcePower : Power {
     float snowTextureAmount;
     RaycastHit hit;
     Vector3 icePos;
-    bool attacking = false;
+    bool instancing = false;
 
 	public override void Start () 
     {
@@ -69,7 +70,7 @@ public class IcePower : Power {
     //bugged, goes through walls
     public IEnumerator DoAttack(Vector3 pos)
     {
-        if (attacking) { yield return null; }
+
         if (powerHolder.transform.childCount > 0)
         {
             foreach (Transform t in powerHolder.transform)
@@ -80,7 +81,7 @@ public class IcePower : Power {
                 }
             }
         }
-        attacking = true;
+
         iceDirection = gun.transform.forward;
 
         icePos = pos + (iceStartDistance / 2) * iceDirection;
@@ -134,7 +135,15 @@ public class IcePower : Power {
             counter++;
             yield return new WaitForFixedUpdate();
         }
-        attacking = false;
+    }
+
+    public IEnumerator DoAttack2(Vector3 center)
+    {
+        GameObject test = Instantiate(iceExplosion) as GameObject;
+        test.transform.position = center;
+        yield return new WaitForSeconds(0.27f);
+        Destroy(test);
+        yield return null;
     }
 
     void InstantiateIce(Vector3 direction , Vector3 position, Vector3 scale, float min, float max)

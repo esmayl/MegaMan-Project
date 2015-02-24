@@ -3,32 +3,42 @@ using System.Collections;
 using UnityEngine.UI;
 using Pathfinding;
 
-[RequireComponent(typeof(Rigidbody),typeof(Seeker))]
+public enum EnemyStates { Idle,Patrol,Attack,AttackAtPlayer}
+public enum EnemyTypes { Melee,Ranged,FlyingMelee,FlyingRanged}
+
+[RequireComponent(typeof(Rigidbody))]
 public class Enemy : MonoBehaviour {
 
+    public EnemyTypes enemyType = EnemyTypes.Ranged;
+    public GameObject damageDealer;
+    public EnemyStates currentState = EnemyStates.Patrol;
     public GameObject player;
     public float hp = 100;
     public int walkDistance = 5;
     public float speed = 3;
     public int meleeDamage = 4;
+    public float rangeToStop = 0.5f;
     internal Vector3 walkDirection;
+    internal float bulletSpeed =1;
+    public float range = 1;
 
     //Pathfinding variables
 
-    Seeker seeker;
+    internal Vector3[] wayPoints = new Vector3[2];
+    Vector3 target;
+    Vector3 velocity;
     Rigidbody controller;
+    int currentWaypoint = 0;
     bool endReached;
 
     Path path;
     
-    int currentWaypoint = 0;
 
     public virtual void Start()
     {
-        seeker = GetComponent<Seeker>();
         controller = rigidbody;
-
-        seeker.StartPath(transform.position,transform.position+(transform.forward * walkDistance),PathCalculationsComplete);
+        wayPoints[0] = transform.position;
+        wayPoints[1] = transform.position + transform.forward * walkDistance;
     }
 
 
@@ -38,57 +48,9 @@ public class Enemy : MonoBehaviour {
         {
             Destroy(gameObject);
         }
-        if (path == null){return;}
 
         //Pathfinding 
         
-
-
-        if (currentWaypoint >= path.vectorPath.Count)
-        {
-            if (endReached) { return; }
-            endReached = true;
-        }
-        if (currentWaypoint < path.vectorPath.Count)
-        {
-            walkDirection = path.vectorPath[currentWaypoint] - transform.position;
-            walkDirection.Normalize();
-            walkDirection.x = 0;
-
-        }
-        if (walkDirection.y > 0.2f)
-        {
-            endReached = true;
-        }
-
-        if (endReached)
-        {
-            //add random number generator to select next action
-            transform.LookAt(transform.position - transform.forward);
-
-
-            //if (currentWaypoint <= 0)
-            //{
-            //    endReached = false;
-            //    controller.velocity = Vector3.zero;
-            //}
-            if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < 1)
-            {
-                controller.velocity = new Vector3(0,walkDirection.y,Mathf.Abs(walkDirection.z * speed));
-                currentWaypoint--;
-            }
-
-        }
-        //Actually moves the enemy
-        if (!endReached)
-        {
-            controller.velocity = walkDirection * speed;
-            if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < 1)
-            {
-                currentWaypoint++;
-            }
-        }
-
 
 	}
 
@@ -108,36 +70,130 @@ public class Enemy : MonoBehaviour {
     }
 
     public virtual void Jump() { }
-    public virtual void MoveForward() { }
-    public void MoveTo(Transform target) 
+
+
+    //doesnt move in y direction
+    public virtual void Patrol()
     {
-        transform.LookAt(new Vector3(transform.position.x, transform.position.y, target.position.z));
-        rigidbody.velocity = transform.forward * speed/2.5f;
+        if (currentWaypoint < wayPoints.Length)
+        {
+            target = wayPoints[currentWaypoint];
+            walkDirection = target - transform.position;
+            velocity = controller.velocity;
+
+            if (walkDirection.magnitude > rangeToStop)
+            {
+                velocity = walkDirection.normalized * speed;
+            }
+            else
+            {
+                currentWaypoint++;
+            }
+        }
+        else
+        {
+            if (currentState == EnemyStates.Patrol)
+            {
+                currentWaypoint = 0;
+            }
+            else
+            {
+                walkDirection = Vector3.zero;
+            }
+        }
+        velocity.y =0;
+        controller.velocity = velocity;
+        transform.LookAt(target);
+    }
+
+
+    public void MoveToPlayer(Transform target) 
+    {
+            walkDirection = target.transform.position - transform.position;
+            velocity = walkDirection.normalized * speed;
+            velocity.y = 0;
+            controller.velocity = velocity;
+            transform.LookAt(target);
+            if (Vector3.Distance(transform.position,target.position)<rangeToStop)
+            {
+                currentState = EnemyStates.Attack;
+            }
+
+        //transform.LookAt(new Vector3(transform.position.x, transform.position.y, target.position.z));
+        //rigidbody.velocity = transform.forward * speed/2.5f;
+    }
+
+    public IEnumerator Idle()
+    {
+        yield return new WaitForSeconds(0.5f);
+        currentState = EnemyStates.Patrol;
     }
     public virtual void LookAtPlayer(Vector3 PlayerPos) { }
-    public virtual void Attack(Vector3 Direction) { }
+
+    public virtual void Attack(Vector3 Direction) 
+    {
+        if (!player)
+        {
+            currentState = EnemyStates.Idle;
+            return;
+        }
+
+
+        Vector3 flattendPos = player.transform.position;
+        flattendPos.y = transform.position.y;
+        transform.LookAt(flattendPos);
+
+        GameObject tempObj = Instantiate(damageDealer, transform.position + Direction,Quaternion.identity) as GameObject;
+        tempObj.transform.LookAt(transform.position + Direction);
+        tempObj.rigidbody.velocity = transform.forward * bulletSpeed;
+    }
     public IEnumerator DetectPlayer(float Radius) 
     {
         while (true)
         {
-            if (endReached)
-            {
-                //seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete);
-            }
-            //else { seeker.StartPath(transform.position, transform.position + (transform.forward * walkDistance), PathCalculationsComplete); }
 
+            //==============================UPDATE========================================//
+            switch (currentState)
+            {
+                case EnemyStates.Patrol:
+                    Patrol();
+                    break;
+                case EnemyStates.Idle:
+                    velocity = Vector3.zero;
+                    StartCoroutine("Idle");
+                    break;
+                case EnemyStates.Attack:
+                    Attack(transform.forward);
+                    break;
+                case EnemyStates.AttackAtPlayer:
+                    MoveToPlayer(player.transform);
+                    //AttackPlayer();
+                    break;
+
+                default:
+                    Patrol();
+                    break;
+            }
 
 
             Collider[] hits;
             hits = Physics.OverlapSphere(transform.position, Radius);
             if (hits.Length > 0)
+
             {
                 Debug.Log("Looping");
                 foreach (Collider h in hits)
                 {
                     if (h.gameObject.layer == LayerMask.NameToLayer("Player"))
                     {
+
                         player = h.gameObject;
+                        currentState = EnemyStates.Attack;
+                        
+                        
+                        
+                        
+                        //using sphere cast to fake damage on collision
                         if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < 1.5f)
                         {
                             player.gameObject.GetComponent<PlayerMovement>().TakeDamage(meleeDamage);
@@ -147,10 +203,12 @@ public class Enemy : MonoBehaviour {
                     }
                 }
             }
-            else
+            if (player)
             {
-
-                player = null;
+                if (Vector3.Distance(player.transform.position, transform.position) > range)
+                {
+                    player = null;
+                }
             }
             yield return new WaitForSeconds(1f);
         }

@@ -3,17 +3,11 @@ using System.Collections;
 
 public class Explosion : Bullet
  {
-    public float life = 5;
     void Start()
     {
+        lifeTime = 2;
         weaponDamage = 10;
         StartCoroutine("DeathTimer");
-    }
-
-    public override IEnumerator DeathTimer()
-    {
-        yield return new WaitForSeconds(life);
-        Destroy(transform.parent.gameObject);
     }
 
     public void OnParticleCollision(GameObject other)
