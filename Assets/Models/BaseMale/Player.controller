@@ -87,8 +87,8 @@ Transition:
   m_Name: 
   m_SrcState: {fileID: 110289222}
   m_DstState: {fileID: 110269298}
-  m_TransitionDuration: .144667447
-  m_TransitionOffset: .0608014874
+  m_TransitionDuration: .824488461
+  m_TransitionOffset: 0
   m_Conditions:
   - m_ConditionMode: 4
     m_ConditionEvent: Speed
@@ -118,6 +118,30 @@ Transition:
     m_ConditionEvent: Jump
     m_EventTreshold: 0
     m_ExitTime: .850000024
+  m_Atomic: 1
+  m_Solo: 0
+  m_Mute: 0
+  m_CanTransitionToSelf: 0
+--- !u!1101 &110121830
+Transition:
+  serializedVersion: 2
+  m_ObjectHideFlags: 3
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_SrcState: {fileID: 110269298}
+  m_DstState: {fileID: 110289222}
+  m_TransitionDuration: .222066313
+  m_TransitionOffset: 0
+  m_Conditions:
+  - m_ConditionMode: 5
+    m_ConditionEvent: 
+    m_EventTreshold: 0
+    m_ExitTime: .699999988
+  - m_ConditionMode: 3
+    m_ConditionEvent: Speed
+    m_EventTreshold: .100000001
+    m_ExitTime: .699999988
   m_Atomic: 1
   m_Solo: 0
   m_Mute: 0
@@ -155,17 +179,17 @@ Transition:
   m_Name: 
   m_SrcState: {fileID: 110269298}
   m_DstState: {fileID: 110289222}
-  m_TransitionDuration: .214285702
-  m_TransitionOffset: 0
+  m_TransitionDuration: .213520348
+  m_TransitionOffset: .0435714796
   m_Conditions:
-  - m_ConditionMode: 3
+  - m_ConditionMode: 4
     m_ConditionEvent: Speed
-    m_EventTreshold: .100000001
+    m_EventTreshold: -.100000001
     m_ExitTime: .785714269
   - m_ConditionMode: 5
     m_ConditionEvent: Speed
     m_EventTreshold: .100000001
-    m_ExitTime: .790000021
+    m_ExitTime: .699999988
   m_Atomic: 1
   m_Solo: 0
   m_Mute: 0
@@ -179,14 +203,18 @@ Transition:
   m_Name: 
   m_SrcState: {fileID: 110269298}
   m_DstState: {fileID: 110203936}
-  m_TransitionDuration: .214285702
+  m_TransitionDuration: .38979575
   m_TransitionOffset: 0
   m_Conditions:
   - m_ConditionMode: 5
     m_ConditionEvent: Speed
     m_EventTreshold: 0
-    m_ExitTime: .790000021
-  m_Atomic: 1
+    m_ExitTime: .458673626
+  - m_ConditionMode: 2
+    m_ConditionEvent: Move
+    m_EventTreshold: 0
+    m_ExitTime: .458673626
+  m_Atomic: 0
   m_Solo: 0
   m_Mute: 0
   m_CanTransitionToSelf: 0
@@ -199,8 +227,8 @@ Transition:
   m_Name: 
   m_SrcState: {fileID: 110289222}
   m_DstState: {fileID: 110269298}
-  m_TransitionDuration: .25
-  m_TransitionOffset: .172383636
+  m_TransitionDuration: .674285531
+  m_TransitionOffset: 0
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: Speed
@@ -291,6 +319,7 @@ StateMachine:
       second:
       - {fileID: 110154598}
       - {fileID: 110170612}
+      - {fileID: 110121830}
   m_MotionSetCount: 1
   m_AnyStatePosition: {x: -72, y: -48, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}

@@ -95,6 +95,7 @@ public class PlayerMovement : MonoBehaviour {
         {
             anim.SetFloat("Speed", Mathf.Abs(Input.GetAxis("Horizontal")));
         }
+
         if (Input.GetAxis("Horizontal")>0.1f || Input.GetAxis("Horizontal")< -0.1f)
         {
             if (Input.GetAxis("Horizontal") > 0.1f)
@@ -108,12 +109,17 @@ public class PlayerMovement : MonoBehaviour {
 
         }
 
+        if (jumping)
+        {
+            anim.SetFloat("Speed", 0);
+        }
+
 
     }
 
 	public virtual void FixedUpdate () 
     {
-
+        anim.SetBool("Move", canJump);
 
         #region Fixes
 
@@ -135,6 +141,7 @@ public class PlayerMovement : MonoBehaviour {
 
         if (jumping)
         {
+
             if (timer > 0.9f)
             {
                 timer = 0;
