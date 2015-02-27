@@ -8,11 +8,12 @@ public class WeakEnemy : Enemy {
     {
         base.Start();
 
-        range = transform.GetChild(0).GetComponent<MeshFilter>().mesh.bounds.extents.y*range;
         StartCoroutine("DetectPlayer", range);
     }
 	
 	public override void Update () {
+
+
         base.Update();
 	}
 
@@ -30,6 +31,7 @@ public class WeakEnemy : Enemy {
         Gizmos.DrawLine(transform.position + -transform.up * 0.5f, transform.position + -transform.up * 0.5f + transform.forward * walkDistance);
 
         Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position + transform.forward*1.1f, -transform.up);
         foreach (Vector3 v in wayPoints)
         {
             Gizmos.DrawSphere(v, 0.5f);

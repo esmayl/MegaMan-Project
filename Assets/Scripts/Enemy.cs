@@ -19,8 +19,9 @@ public class Enemy : MonoBehaviour {
     public int meleeDamage = 4;
     public float rangeToStop = 0.5f;
     internal Vector3 walkDirection;
-    internal float bulletSpeed =1;
+    internal float bulletSpeed =20;
     public float range = 1;
+    public bool canGoForward = false                                                                                                     ;
 
     //Pathfinding variables
 
@@ -29,16 +30,24 @@ public class Enemy : MonoBehaviour {
     Vector3 velocity;
     Rigidbody controller;
     int currentWaypoint = 0;
-    bool endReached;
+    float height;
 
-    Path path;
+    RaycastHit hit;
     
 
     public virtual void Start()
     {
+        if(Physics.Raycast(new Ray(transform.position,-transform.up),out hit,10f))
+        {
+            if (hit.transform.tag == "Ground")
+            {
+                transform.position = hit.point+transform.up/4;
+                height = transform.position.y;
+            }
+        }
         controller = rigidbody;
-        wayPoints[0] = transform.position;
-        wayPoints[1] = transform.position + transform.forward * walkDistance;
+        wayPoints[0] = transform.position + transform.forward * walkDistance;
+        wayPoints[1] = transform.position;
     }
 
 
@@ -48,21 +57,11 @@ public class Enemy : MonoBehaviour {
         {
             Destroy(gameObject);
         }
-
-        //Pathfinding 
-        
-
-	}
-
-    public void PathCalculationsComplete(Path p)
-    {
-        if (!p.error)
+        if (transform.position.y > height)
         {
-            endReached = false;
-            path = p;
-            currentWaypoint = 0;
+            transform.position = new Vector3(transform.position.x, height, transform.position.z);
         }
-    }
+	}
 
     public void TakeDamage(float damage)
     {
@@ -75,7 +74,7 @@ public class Enemy : MonoBehaviour {
     //doesnt move in y direction
     public virtual void Patrol()
     {
-        if (currentWaypoint < wayPoints.Length)
+        if (currentWaypoint < wayPoints.Length-1)
         {
             target = wayPoints[currentWaypoint];
             walkDirection = target - transform.position;
@@ -96,23 +95,44 @@ public class Enemy : MonoBehaviour {
             {
                 currentWaypoint = 0;
             }
-            else
-            {
-                walkDirection = Vector3.zero;
-            }
         }
         velocity.y =0;
-        controller.velocity = velocity;
-        transform.LookAt(target);
-    }
 
+        RaycastHit hit;
+        if (Physics.Raycast(new Ray(transform.position + transform.forward * 1.1f,-transform.up),out hit,3f))
+        {
+            if (hit.transform.tag == "Ground")
+            {
+                if (hit.distance < 0.4f)
+                {
+                    canGoForward = true;
+                }
+                else { return; }
+            }
+        }
+        else
+        {
+            canGoForward = false;
+        }
+
+        if (canGoForward)
+        {
+            controller.velocity = velocity;
+        }
+        transform.LookAt(transform.position+velocity);
+    }
 
     public void MoveToPlayer(Transform target) 
     {
             walkDirection = target.transform.position - transform.position;
             velocity = walkDirection.normalized * speed;
             velocity.y = 0;
-            controller.velocity = velocity;
+
+
+            if (canGoForward)
+            {
+                controller.velocity = velocity;
+            }
             transform.LookAt(target);
             if (Vector3.Distance(transform.position,target.position)<rangeToStop)
             {
@@ -138,21 +158,70 @@ public class Enemy : MonoBehaviour {
             return;
         }
 
-
-        Vector3 flattendPos = player.transform.position;
-        flattendPos.y = transform.position.y;
-        transform.LookAt(flattendPos);
-
-        GameObject tempObj = Instantiate(damageDealer, transform.position + Direction,Quaternion.identity) as GameObject;
-        tempObj.transform.LookAt(transform.position + Direction);
-        tempObj.rigidbody.velocity = transform.forward * bulletSpeed;
+        if (Mathf.Abs(player.transform.position.y - transform.position.y) < 1f)
+        {
+            Vector3 flattendPos = player.transform.position;
+            flattendPos.y = transform.position.y;
+            transform.LookAt(flattendPos);
+            
+            //using transform.up to make sure the bullet instances above the ground
+            GameObject tempObj = Instantiate(damageDealer, transform.position + Direction+(transform.up/8), Quaternion.identity) as GameObject;
+            tempObj.transform.LookAt(transform.position + Direction + (transform.up / 8));
+            tempObj.rigidbody.velocity = transform.forward * bulletSpeed * 1.5f;
+        }
     }
+
     public IEnumerator DetectPlayer(float Radius) 
     {
         while (true)
         {
 
             //==============================UPDATE========================================//
+
+            Collider[] hits;
+            hits = Physics.OverlapSphere(transform.position, range);
+            if (hits.Length > 0)
+            {
+                foreach (Collider h in hits)
+                {
+                    if (h.gameObject.layer == LayerMask.NameToLayer("Player"))
+                    {
+                        if(Physics.Raycast(new Ray(transform.position+transform.up/4,h.transform.position-transform.position),out hit))
+                        {
+                            if (hit.transform.tag == "Player")
+                            {
+                                player = h.gameObject;
+                                Vector3 playerPos = player.transform.position;
+                                playerPos.y = transform.position.y;
+                                transform.LookAt(playerPos);
+                                currentState = EnemyStates.Attack;
+
+                                //using sphere cast to fake damage on collision
+                                if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < 1.5f)
+                                {
+                                    player.gameObject.GetComponent<PlayerMovement>().TakeDamage(meleeDamage);
+                                }
+                            }
+                            if (hit.transform.tag == "Ground")
+                            {
+                                currentState = EnemyStates.Patrol;
+                            }
+                        }
+                        
+                        
+                        
+                    }
+                }
+            }
+            if (player)
+            {
+                if (Vector3.Distance(player.transform.position, transform.position) > range)
+                {
+                    player = null;
+                    currentState = EnemyStates.Patrol;
+                }
+            }
+
             switch (currentState)
             {
                 case EnemyStates.Patrol:
@@ -176,41 +245,7 @@ public class Enemy : MonoBehaviour {
             }
 
 
-            Collider[] hits;
-            hits = Physics.OverlapSphere(transform.position, Radius);
-            if (hits.Length > 0)
-
-            {
-                Debug.Log("Looping");
-                foreach (Collider h in hits)
-                {
-                    if (h.gameObject.layer == LayerMask.NameToLayer("Player"))
-                    {
-
-                        player = h.gameObject;
-                        currentState = EnemyStates.Attack;
-                        
-                        
-                        
-                        
-                        //using sphere cast to fake damage on collision
-                        if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < 1.5f)
-                        {
-                            player.gameObject.GetComponent<PlayerMovement>().TakeDamage(meleeDamage);
-                        }
-                        
-                        Debug.Log("" + h);
-                    }
-                }
-            }
-            if (player)
-            {
-                if (Vector3.Distance(player.transform.position, transform.position) > range)
-                {
-                    player = null;
-                }
-            }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 

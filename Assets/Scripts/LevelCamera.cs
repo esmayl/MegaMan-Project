@@ -83,19 +83,19 @@ public class LevelCamera : MonoBehaviour {
 
     public void MoveForward()
     {
-        transform.position += Time.deltaTime * transform.forward*moveSpeed;
+        transform.position += Time.deltaTime * transform.forward*moveSpeed*2;
     }
     public void MoveBackward()
     {
-        transform.position -= Time.deltaTime * transform.forward * moveSpeed;
+        transform.position -= Time.deltaTime * transform.forward * moveSpeed*2;
     }
     public void MoveDown()
     {
-        transform.position -= Time.deltaTime * transform.up * moveSpeed;
+        transform.position -= Time.deltaTime * transform.up * moveSpeed*3.5f;
     }
     public void MoveUp()
     {
-        transform.position += Time.deltaTime * transform.up * moveSpeed;
+        transform.position += Time.deltaTime * transform.up * moveSpeed*1.5f;
     }
 
     bool SafeFrameCheck()
@@ -104,24 +104,24 @@ public class LevelCamera : MonoBehaviour {
             Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
             float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
             float ratioY = screenPos.y / transform.GetChild(0).camera.pixelHeight;
-            if (ratio > 0.6f)
-            {
-                MoveForward();
-                return false;
-            }
-            if (ratio < 0.5f)
-            {
-                MoveBackward();
-                return false;
-            }
-            if (ratioY > 0.75f)
+            if (ratioY > 0.37f)
             {
                 MoveUp();
                 return false;
             }
-            if (ratioY < 0.35f)
+            else if (ratioY < 0.2f)
             {
                 MoveDown();
+                return false;
+            }
+            else if (ratio > 0.65f)
+            {
+                MoveForward();
+                return false;
+            }
+            else if (ratio < 0.45f)
+            {
+                MoveBackward();
                 return false;
             }
             return true;

@@ -18,17 +18,18 @@ public class PlayerMovement : MonoBehaviour {
 
     //climbing variables
     internal bool climbing = false;
+    internal GameObject ladder;
 
     //movement variables
     internal CharacterController controller;
     internal Vector3 startDepth;
     public float speed = 5.5f;
+    internal Vector3 velocity = Vector3.zero;
 
     //jump variables
     internal bool canJump = true;
     internal bool jumping = false;
     Vector3 gravity = Vector3.zero;
-    Vector3 velocity = Vector3.zero;
     RaycastHit hit;
     int[] numberArray = new int[15];
     int a = 89, b = 55, c = 0, i = 1;
@@ -55,16 +56,14 @@ public class PlayerMovement : MonoBehaviour {
     public virtual void Update()
     {
 
+
         if (climbing)
         {
-            if (Input.GetAxis("Vertical")>0.1f)
-            {
-                gravity.y = 3;
-            }
-            else
-            {
-                gravity = Vector3.zero;
-            }
+            anim.SetFloat("Speed", 0);
+
+                gravity.y = 3*Input.GetAxis("Vertical");
+
+           if (Input.GetButtonDown("Jump") && Mathf.Abs(Input.GetAxis("Horizontal")) >= 0.1f) { gravity = Vector3.zero; StartCoroutine("Jump");  }
 
         }
         else

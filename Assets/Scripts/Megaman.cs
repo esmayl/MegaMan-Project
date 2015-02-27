@@ -10,6 +10,8 @@ public class Megaman : PlayerMovement {
 
     public override void Update()
     {
+
+
         base.Update();
     }
 

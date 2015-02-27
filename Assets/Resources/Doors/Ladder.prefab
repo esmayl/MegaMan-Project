@@ -10,12 +10,12 @@ GameObject:
   - 4: {fileID: 410384}
   - 33: {fileID: 3310384}
   - 23: {fileID: 2310384}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &134892
 GameObject:
@@ -26,13 +26,13 @@ GameObject:
   m_Component:
   - 4: {fileID: 434892}
   - 65: {fileID: 6534894}
-  - 114: {fileID: 11434894}
-  m_Layer: 0
+  - 114: {fileID: 11427302}
+  m_Layer: 15
   m_Name: Ladder
   m_TagString: Untagged
   m_Icon: {fileID: -1203168336, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &134894
 GameObject:
@@ -44,12 +44,12 @@ GameObject:
   - 4: {fileID: 434894}
   - 33: {fileID: 3334894}
   - 23: {fileID: 2334894}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &410384
 Transform:
@@ -70,8 +70,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 134892}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.9000001, y: 15.3199997, z: 15}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -3.50999999, y: 5.28999996, z: 15}
+  m_LocalScale: {x: 1, y: 1, z: .899999976}
   m_Children:
   - {fileID: 410384}
   - {fileID: 434894}
@@ -153,9 +153,9 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 4.96999979, z: 1}
-  m_Center: {x: .25, y: .939999998, z: 0}
---- !u!114 &11434894
+  m_Size: {x: .829999983, y: 4.96999979, z: 1}
+  m_Center: {x: .529999971, y: .939999998, z: 0}
+--- !u!114 &11427302
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

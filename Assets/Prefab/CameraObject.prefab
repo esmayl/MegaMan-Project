@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ff572823abb3c947b817c19c03ead9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 100002, guid: 2bdc564ab52ffc147a0e39200c93c8aa, type: 2}
+  player: {fileID: 0}
   hpBar: {fileID: 11432786}
   barForeground: {fileID: 11432792}
   chargeBar: {fileID: 11432784}
