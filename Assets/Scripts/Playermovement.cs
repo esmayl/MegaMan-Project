@@ -204,6 +204,7 @@ public class PlayerMovement : MonoBehaviour {
     public void TakeDamage(int dmg)
     {
         hp -= dmg;
+        anim.SetTrigger("Damaged");
         Camera.main.GetComponentInParent<LevelCamera>().RemoveHP();
         if (hp < 1) { StartCoroutine("Death"); }
 
