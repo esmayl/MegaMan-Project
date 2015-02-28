@@ -14,7 +14,6 @@ public class Enemy : MonoBehaviour {
     public EnemyStates currentState = EnemyStates.Patrol;
     public GameObject player;
     public float hp = 100;
-    public int walkDistance = 5;
     public float speed = 3;
     public int meleeDamage = 4;
     public float rangeToStop = 0.5f;
@@ -24,12 +23,9 @@ public class Enemy : MonoBehaviour {
     public bool canGoForward = false                                                                                                     ;
 
     //Pathfinding variables
-
-    internal Vector3[] wayPoints = new Vector3[2];
     Vector3 target;
     Vector3 velocity;
     Rigidbody controller;
-    int currentWaypoint = 0;
     float height;
 
     RaycastHit hit;
@@ -48,8 +44,6 @@ public class Enemy : MonoBehaviour {
             }
         }
         controller = rigidbody;
-        wayPoints[0] = transform.position + transform.forward * walkDistance;
-        wayPoints[1] = transform.position;
     }
 
 
@@ -83,41 +77,42 @@ public class Enemy : MonoBehaviour {
     public virtual void Jump() { }
 
 
-    //doesnt move in y direction
+    //doesnt move in y direction, detects path on its own by raycasting forward and at 1.5 times forward in the down direction
     public virtual void Patrol()
     {
-        if (currentWaypoint < wayPoints.Length-1)
-        {
-            target = wayPoints[currentWaypoint];
-            walkDirection = target - transform.position;
-            velocity = controller.velocity;
-
-            if (walkDirection.magnitude > rangeToStop)
-            {
-                velocity = walkDirection.normalized * speed;
-            }
-            else
-            {
-                currentWaypoint++;
-            }
-        }
-        else
-        {
-            if (currentState == EnemyStates.Patrol)
-            {
-                currentWaypoint = 0;
-            }
-        }
         velocity.y =0;
 
         RaycastHit hit;
-        if (Physics.Raycast(new Ray(transform.position + transform.forward * 1.1f,-transform.up),out hit,3f))
+        if (Physics.Raycast(new Ray(transform.position + transform.forward * 1.5f,-transform.up),out hit,10))
         {
             if (hit.transform.tag == "Ground")
             {
                 if (hit.distance < 0.4f)
                 {
-                    canGoForward = true;
+                    if (!Physics.Linecast(transform.position, transform.position + transform.forward))
+                    {
+                        canGoForward = true;
+                        target = transform.position + transform.forward;
+                        walkDirection = target - transform.position;
+                        velocity = controller.velocity;
+
+                        if (walkDirection.magnitude > rangeToStop)
+                        {
+                            velocity = walkDirection.normalized * speed;
+                        }
+                        controller.velocity = velocity;
+                    }
+                    else
+                    {
+                        canGoForward = false;
+                        transform.LookAt(transform.position - transform.forward);
+                    }
+
+                }
+                if (hit.distance > 0.41f)
+                {
+                    canGoForward = false;
+                    transform.LookAt(transform.position-transform.forward);
                 }
                 else { return; }
             }
@@ -127,32 +122,11 @@ public class Enemy : MonoBehaviour {
             canGoForward = false;
         }
 
-        if (canGoForward)
-        {
-            controller.velocity = velocity;
-        }
-        transform.LookAt(transform.position+velocity);
     }
 
     public void MoveToPlayer(Transform target) 
     {
-            walkDirection = target.transform.position - transform.position;
-            velocity = walkDirection.normalized * speed;
-            velocity.y = 0;
 
-
-            if (canGoForward)
-            {
-                controller.velocity = velocity;
-            }
-            transform.LookAt(target);
-            if (Vector3.Distance(transform.position,target.position)<rangeToStop)
-            {
-                currentState = EnemyStates.Attack;
-            }
-
-        //transform.LookAt(new Vector3(transform.position.x, transform.position.y, target.position.z));
-        //rigidbody.velocity = transform.forward * speed/2.5f;
     }
 
     public IEnumerator Idle()

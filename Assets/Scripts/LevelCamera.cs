@@ -38,7 +38,7 @@ public class LevelCamera : MonoBehaviour {
         {
             for (int i = 1; i < 9; i++)
             {
-                if (i == 1) { mp[0] = (Image)Image.Instantiate(barForeground); mp[0].transform.SetParent(chargeBar.transform, false); mp[0].rectTransform.position = chargeBar.rectTransform.position; }
+                if (i == 1) { mp[0] = (Image)Image.Instantiate(barForeground); mp[0].transform.SetParent(chargeBar.transform, false); mp[0].rectTransform.position = barForeground.rectTransform.position + barForeground.rectTransform.right/4; }
                 Image temp = (Image)Image.Instantiate(barForeground);
                 temp.rectTransform.SetParent(chargeBar.transform, false);
                 temp.rectTransform.localScale = new Vector3(1, 1, 1);
@@ -88,7 +88,6 @@ public class LevelCamera : MonoBehaviour {
 
     public void RemoveMP()
     {
-        if (player.GetComponent<PlayerMovement>().mp <= 0) { return; }
         if (player.GetComponent<PlayerMovement>().mp < 100)
         {
             for (int i = (int)player.GetComponent<PlayerMovement>().mp / 10; i < 9; i++)

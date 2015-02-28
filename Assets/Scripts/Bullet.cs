@@ -5,7 +5,7 @@ public class Bullet : MonoBehaviour {
 
     public ParticleSystem particle;
     internal float baseDamage=1f;
-    internal float weaponDamage = 1f;
+    public float weaponDamage = 1f;
     internal Transform attackHolder;
     internal float lifeTime = 5;
 
@@ -22,6 +22,14 @@ public class Bullet : MonoBehaviour {
         {
             coll.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
             Destroy(gameObject);
+        }
+        if (gameObject.layer == LayerMask.NameToLayer("EnemyProjectiles"))
+        {
+            if (coll.gameObject.tag == "Player")
+            {
+                coll.gameObject.SendMessage("TakeDamage", baseDamage * weaponDamage);
+                Destroy(gameObject);
+            }
         }
         if(coll.gameObject.tag == "Ground")
         {

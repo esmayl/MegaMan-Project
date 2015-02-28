@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour {
     internal GameObject powerHolder;
 
     internal int score = 0;
-    internal int hp = 30;
+    internal int hp = 100;
     public int mp = 100;
     internal Animator anim;
 

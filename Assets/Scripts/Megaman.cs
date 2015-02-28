@@ -6,6 +6,7 @@ public class Megaman : PlayerMovement {
     public KeyCombo combo1;
     public KeyCombo combo2;
     public KeyCombo combo3;
+    public KeyCombo combo4;
 
     public override void Start()
     {
@@ -14,16 +15,22 @@ public class Megaman : PlayerMovement {
 
     public override void Update()
     {
-        if (combo1.Check())
+        base.Update();
+
+        if (Input.GetButtonDown("Fire1"))
         {
             activePower = powers[0];
+            if (powerHolder.name != activePower.name) { Destroy(powerHolder); powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject; }
             activePower.Attack(transform);
         }
+
         if (combo2.Check())
         {
             activePower = powers[1];
             if (UseMP(activePower.mpCost))
             {
+                if (powerHolder.name != activePower.name) { Destroy(powerHolder); powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject; }
+
                 activePower.Attack(transform);
             }
         }
@@ -32,10 +39,11 @@ public class Megaman : PlayerMovement {
             activePower = powers[2];
             if (UseMP(activePower.mpCost))
             {
+                if (powerHolder.name != activePower.name) { Destroy(powerHolder); powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject; }
+
                 activePower.Attack(transform);
             }
         }
-        base.Update();
     }
 
     public override void FixedUpdate() 

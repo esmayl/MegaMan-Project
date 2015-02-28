@@ -900,12 +900,13 @@ MonoBehaviour:
   - {fileID: 11459460, guid: 045ad2936e7f57842b3b34ad2f2a1c16, type: 2}
   activePower: {fileID: 11459460, guid: 045ad2936e7f57842b3b34ad2f2a1c16, type: 2}
   gun: {fileID: 100004}
-  mp: 1000
+  mp: 100
   speed: 5.5
   combo1:
     buttons:
+    - right
     - Fire1
-    allowedTimeBetweenButtons: .100000001
+    allowedTimeBetweenButtons: .0500000007
   combo2:
     buttons:
     - down
@@ -914,6 +915,11 @@ MonoBehaviour:
   combo3:
     buttons:
     - up
+    - Fire1
+    allowedTimeBetweenButtons: .100000001
+  combo4:
+    buttons:
+    - left
     - Fire1
     allowedTimeBetweenButtons: .100000001
 --- !u!137 &13730716

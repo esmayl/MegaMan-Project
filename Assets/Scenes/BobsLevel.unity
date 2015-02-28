@@ -75,50 +75,6 @@ NavMeshSettings:
     heightInaccuracy: 10
     tileSizeHint: 0
   m_NavMesh: {fileID: 0}
---- !u!1001 &3060396
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -9
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 4.13663059e-07
-      objectReference: {fileID: 0}
-    - target: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-      propertyPath: m_RootOrder
-      value: 460
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-  m_RootGameObject: {fileID: 1816036884}
-  m_IsPrefabParent: 0
-  m_IsExploded: 1
 --- !u!1001 &3309350
 Prefab:
   m_ObjectHideFlags: 0
@@ -6868,13 +6824,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &246260149
 Prefab:
   m_ObjectHideFlags: 0
@@ -8921,64 +8875,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 148
---- !u!1 &320871580
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 147240, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 320871583}
-  - 33: {fileID: 320871582}
-  - 23: {fileID: 320871581}
-  m_Layer: 10
-  m_Name: BaseEnemy10Mesh
-  m_TagString: Enemy
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!23 &320871581
-Renderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 2347240, guid: df16e9b9387162544ab89ce57992b788,
-    type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 320871580}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
-  m_Materials:
-  - {fileID: 2100000, guid: 4034e75d5f24609418c90f586c9b41f4, type: 2}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
---- !u!33 &320871582
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 3347240, guid: df16e9b9387162544ab89ce57992b788,
-    type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 320871580}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &320871583
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 447240, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 320871580}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: .389999986}
-  m_LocalScale: {x: 1, y: .63749963, z: 1.58750045}
-  m_Children: []
-  m_Father: {fileID: 1816036885}
-  m_RootOrder: 0
 --- !u!1 &321568156
 GameObject:
   m_ObjectHideFlags: 0
@@ -15287,7 +15183,7 @@ Transform:
   m_Children:
   - {fileID: 109191354}
   m_Father: {fileID: 0}
-  m_RootOrder: 462
+  m_RootOrder: 461
 --- !u!65 &593679374
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15334,13 +15230,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &596235714
 Prefab:
   m_ObjectHideFlags: 0
@@ -16059,7 +15953,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 471
+  m_RootOrder: 470
 --- !u!1 &612418900
 GameObject:
   m_ObjectHideFlags: 0
@@ -21613,13 +21507,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &808235772
 Prefab:
   m_ObjectHideFlags: 0
@@ -24857,7 +24749,7 @@ Transform:
   m_Children:
   - {fileID: 1843667166}
   m_Father: {fileID: 0}
-  m_RootOrder: 469
+  m_RootOrder: 468
 --- !u!65 &915531096
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24904,13 +24796,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &916379815
 Prefab:
   m_ObjectHideFlags: 0
@@ -25201,7 +25091,7 @@ Transform:
   m_Children:
   - {fileID: 1998784562}
   m_Father: {fileID: 0}
-  m_RootOrder: 463
+  m_RootOrder: 462
 --- !u!65 &922780487
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25248,13 +25138,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &923349328
 Prefab:
   m_ObjectHideFlags: 0
@@ -26851,13 +26739,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!4 &971959078
 Transform:
   m_ObjectHideFlags: 0
@@ -26870,7 +26756,7 @@ Transform:
   m_Children:
   - {fileID: 1891919190}
   m_Father: {fileID: 0}
-  m_RootOrder: 464
+  m_RootOrder: 463
 --- !u!1 &973385964
 GameObject:
   m_ObjectHideFlags: 0
@@ -27340,13 +27226,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 8
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &995850986
 Prefab:
   m_ObjectHideFlags: 0
@@ -28780,7 +28664,7 @@ Transform:
   m_LocalScale: {x: 2, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 470
+  m_RootOrder: 469
 --- !u!1 &1043863690
 GameObject:
   m_ObjectHideFlags: 0
@@ -29792,13 +29676,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!4 &1088884439
 Transform:
   m_ObjectHideFlags: 0
@@ -29811,7 +29693,7 @@ Transform:
   m_Children:
   - {fileID: 1403876265}
   m_Father: {fileID: 0}
-  m_RootOrder: 467
+  m_RootOrder: 466
 --- !u!1001 &1089285160
 Prefab:
   m_ObjectHideFlags: 0
@@ -41334,13 +41216,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!4 &1609272053
 Transform:
   m_ObjectHideFlags: 0
@@ -42346,13 +42226,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!4 &1626256757
 Transform:
   m_ObjectHideFlags: 0
@@ -42365,7 +42243,7 @@ Transform:
   m_Children:
   - {fileID: 235043975}
   m_Father: {fileID: 0}
-  m_RootOrder: 468
+  m_RootOrder: 467
 --- !u!1001 &1627289726
 Prefab:
   m_ObjectHideFlags: 0
@@ -46209,13 +46087,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1 &1768099138
 GameObject:
   m_ObjectHideFlags: 0
@@ -48042,90 +47918,6 @@ Prefab:
   m_RootGameObject: {fileID: 1643209611}
   m_IsPrefabParent: 0
   m_IsExploded: 1
---- !u!1 &1816036884
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 147238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1816036885}
-  - 114: {fileID: 1816036888}
-  - 54: {fileID: 1816036887}
-  - 65: {fileID: 1816036886}
-  m_Layer: 10
-  m_Name: BaseEnemy10
-  m_TagString: Enemy
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1816036885
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 447238, guid: df16e9b9387162544ab89ce57992b788, type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 1816036884}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 4.13663059e-07}
-  m_LocalPosition: {x: -3, y: -9, z: 40}
-  m_LocalScale: {x: .5, y: .5, z: .5}
-  m_Children:
-  - {fileID: 320871583}
-  m_Father: {fileID: 0}
-  m_RootOrder: 461
---- !u!65 &1816036886
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 6520342, guid: df16e9b9387162544ab89ce57992b788,
-    type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 1816036884}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 2.16000009}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &1816036887
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 5464508, guid: df16e9b9387162544ab89ce57992b788,
-    type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 1816036884}
-  serializedVersion: 2
-  m_Mass: 40
-  m_Drag: 2.01999998
-  m_AngularDrag: .0500000007
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 118
-  m_CollisionDetection: 2
---- !u!114 &1816036888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11447240, guid: df16e9b9387162544ab89ce57992b788,
-    type: 2}
-  m_PrefabInternal: {fileID: 3060396}
-  m_GameObject: {fileID: 1816036884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f20b2ea35841ff4f81f0c21953900cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: 1
-  damageDealer: {fileID: 100000, guid: e1942449d45a94c44bf9f8715690b554, type: 2}
-  currentState: 1
-  player: {fileID: 0}
-  hp: 10
-  walkDistance: 3
-  speed: 3
-  meleeDamage: 4
-  rangeToStop: .5
-  range: 15
-  canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1 &1816859311
 GameObject:
   m_ObjectHideFlags: 0
@@ -54622,7 +54414,7 @@ Transform:
   m_Children:
   - {fileID: 1031509897}
   m_Father: {fileID: 0}
-  m_RootOrder: 465
+  m_RootOrder: 464
 --- !u!65 &2048118542
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -54669,13 +54461,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!1001 &2055851145
 Prefab:
   m_ObjectHideFlags: 0
@@ -55852,13 +55642,11 @@ MonoBehaviour:
   currentState: 1
   player: {fileID: 0}
   hp: 10
-  walkDistance: 3
   speed: 3
   meleeDamage: 4
   rangeToStop: .5
   range: 15
   canGoForward: 0
-  itemDrop: {fileID: 0}
 --- !u!4 &2119942462
 Transform:
   m_ObjectHideFlags: 0
@@ -55871,7 +55659,7 @@ Transform:
   m_Children:
   - {fileID: 1314555600}
   m_Father: {fileID: 0}
-  m_RootOrder: 466
+  m_RootOrder: 465
 --- !u!1 &2121621948
 GameObject:
   m_ObjectHideFlags: 0
