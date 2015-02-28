@@ -902,6 +902,20 @@ MonoBehaviour:
   gun: {fileID: 100004}
   mp: 1000
   speed: 5.5
+  combo1:
+    buttons:
+    - Fire1
+    allowedTimeBetweenButtons: .100000001
+  combo2:
+    buttons:
+    - down
+    - Fire1
+    allowedTimeBetweenButtons: .100000001
+  combo3:
+    buttons:
+    - up
+    - Fire1
+    allowedTimeBetweenButtons: .100000001
 --- !u!137 &13730716
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

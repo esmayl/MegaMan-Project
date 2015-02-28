@@ -11,10 +11,13 @@ public class PlayerMovement : MonoBehaviour {
     public GameObject gun;
     internal GameObject powerHolder;
 
-    
-    internal int hp = 100;
+    internal int score = 0;
+    internal int hp = 30;
     public int mp = 100;
     internal Animator anim;
+
+    //item variables
+    internal bool usingItem = false;
 
     //climbing variables
     internal bool climbing = false;
@@ -32,7 +35,6 @@ public class PlayerMovement : MonoBehaviour {
     Vector3 gravity = Vector3.zero;
     RaycastHit hit;
     int[] numberArray = new int[15];
-    int a = 89, b = 55, c = 0, i = 1;
     bool falling = false;
     float timer;
     
@@ -52,7 +54,6 @@ public class PlayerMovement : MonoBehaviour {
         powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
 	}
 
-
     public virtual void Update()
     {
 
@@ -68,27 +69,6 @@ public class PlayerMovement : MonoBehaviour {
         }
         else
         {
-            canJump = controller.isGrounded;
-        }
-
-        //Fire power
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (UseMP(activePower.mpCost))
-            {
-                Debug.Log(activePower.mpCost + " mp - " + mp);
-                activePower.Attack(transform);
-            }
-            else
-            {
-                Debug.Log("No mana to use skill");
-            }
-        }
-
-        //Switch to next power
-        if (Input.GetMouseButtonDown(1))
-        {
-            SwitchPower();
         }
 
         if (canJump)
@@ -119,6 +99,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	public virtual void FixedUpdate () 
     {
+        canJump = controller.isGrounded;
+
         anim.SetBool("Move", canJump);
 
         #region Fixes
@@ -222,6 +204,7 @@ public class PlayerMovement : MonoBehaviour {
     public void TakeDamage(int dmg)
     {
         hp -= dmg;
+        Camera.main.GetComponentInParent<LevelCamera>().RemoveHP();
         if (hp < 1) { StartCoroutine("Death"); }
 
     }
@@ -232,7 +215,8 @@ public class PlayerMovement : MonoBehaviour {
         if (mp < 0) { Debug.Log("NoMana"); return false; }
 
         mp -= amountUsed;
-        if (mp < 0) { Debug.Log("NoMana"); return false; }       
+        if (mp < 0) { Debug.Log("NoMana"); return false; }
+        Camera.main.GetComponentInParent<LevelCamera>().RemoveMP();
         return true;
     }
     
@@ -255,5 +239,57 @@ public class PlayerMovement : MonoBehaviour {
             powerHolder = Instantiate(activePower.gameObject, transform.position, Quaternion.identity) as GameObject;
             powerHolder.GetComponent<Power>().gun = gun;
         }
+    }
+
+    public void UseItem(Item itemToUse)
+    {
+        if (usingItem) { return; }
+
+        switch (itemToUse.itemType)
+        {
+            case ItemType.hp:
+                usingItem = true;
+                GainHP(itemToUse.gainAmount);
+                break;
+            case ItemType.mp:
+                usingItem = true;
+                GainMP(itemToUse.gainAmount);
+                break;
+            case ItemType.score:
+                usingItem = true;
+                GainScore(itemToUse.gainAmount);
+                break;
+        }
+        Debug.LogError("");
+
+    }
+
+    private void GainScore(int p)
+    {
+        Camera.main.GetComponentInParent<LevelCamera>().score += p;
+        //Camera.main.GetComponent<LevelCamera>().scoreText.text = "" + score;
+
+        usingItem = false;
+
+    }
+
+    private void GainMP(int p)
+    {
+        mp += p;
+        if (mp > 100) { mp = 100; }
+        if (mp < 1) { mp = 0; }
+        Camera.main.GetComponentInParent<LevelCamera>().AddMP();
+        usingItem = false;
+
+    }
+
+    private void GainHP(int p)
+    {
+        hp += p;
+        if (hp > 100) { hp = 100; }
+        if (hp < 1) { hp = 0; }
+        Camera.main.GetComponentInParent<LevelCamera>().AddHP();
+        usingItem = false;
+
     }
 }

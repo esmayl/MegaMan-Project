@@ -37,6 +37,8 @@ public class Enemy : MonoBehaviour {
 
     public virtual void Start()
     {
+
+
         if(Physics.Raycast(new Ray(transform.position,-transform.up),out hit,10f))
         {
             if (hit.transform.tag == "Ground")
@@ -55,11 +57,21 @@ public class Enemy : MonoBehaviour {
 
         if (hp <= 0)
         {
-            Destroy(gameObject);
+            ItemDatabase.DropItem(transform.position, "BaseEnemy10");
+            Destroy(gameObject,0.1f);
         }
         if (transform.position.y > height)
         {
             transform.position = new Vector3(transform.position.x, height, transform.position.z);
+        }
+
+        if (player)
+        {
+            //using sphere cast to fake damage on collision
+            if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < 1.5f)
+            {
+                player.gameObject.GetComponent<PlayerMovement>().TakeDamage(Mathf.FloorToInt(meleeDamage*Time.deltaTime));
+            }
         }
 	}
 
@@ -196,11 +208,7 @@ public class Enemy : MonoBehaviour {
                                 transform.LookAt(playerPos);
                                 currentState = EnemyStates.Attack;
 
-                                //using sphere cast to fake damage on collision
-                                if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < 1.5f)
-                                {
-                                    player.gameObject.GetComponent<PlayerMovement>().TakeDamage(meleeDamage);
-                                }
+                                
                             }
                             if (hit.transform.tag == "Ground")
                             {

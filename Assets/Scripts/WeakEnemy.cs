@@ -3,6 +3,8 @@ using System.Collections;
 
 public class WeakEnemy : Enemy {
 
+    public Item itemDrop;
+
 
     public override void Start()
     {
