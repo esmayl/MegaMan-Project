@@ -19,16 +19,16 @@ public class Enemy : MonoBehaviour {
     public float rangeToStop = 0.5f;
     internal Vector3 walkDirection;
     internal float bulletSpeed =20;
-    public float range = 1;
+    public float range = 15;
     public bool canGoForward = false                                                                                                     ;
 
     //Pathfinding variables
+    internal Vector3 velocity;
+    internal RaycastHit hit;
     Vector3 target;
-    Vector3 velocity;
     Rigidbody controller;
     float height;
 
-    RaycastHit hit;
     
 
     public virtual void Start()
@@ -51,7 +51,11 @@ public class Enemy : MonoBehaviour {
 
         if (hp <= 0)
         {
-            ItemDatabase.DropItem(transform.position, "BaseEnemy10");
+            if (transform.name.Contains("(Clone)"))
+            {
+                transform.name.Remove(transform.name.IndexOf("("));
+            }
+            ItemDatabase.DropItem(transform.position, transform.name);
             Destroy(gameObject,0.1f);
         }
         if (transform.position.y > height)
@@ -126,7 +130,45 @@ public class Enemy : MonoBehaviour {
 
     public void MoveToPlayer(Transform target) 
     {
+        RaycastHit hit;
+        if (Physics.Raycast(new Ray(transform.position + transform.forward * 1.5f, -transform.up), out hit, 10))
+        {
+            if (hit.transform.tag == "Ground")
+            {
+                if (hit.distance < 0.4f)
+                {
+                    if (!Physics.Linecast(transform.position, transform.position + transform.forward))
+                    {
+                        canGoForward = true;
+                        walkDirection = target.position - transform.position;
+                        velocity = controller.velocity;
 
+                        if (walkDirection.magnitude > rangeToStop)
+                        {
+                            velocity = walkDirection.normalized * speed;
+                        }
+                        velocity.y = 0;
+                        controller.velocity = velocity;
+                    }
+                    else
+                    {
+                        canGoForward = false;
+                        transform.LookAt(transform.position - transform.forward);
+                    }
+
+                }
+                if (hit.distance > 0.41f)
+                {
+                    canGoForward = false;
+                    transform.LookAt(transform.position - transform.forward);
+                }
+                else { return; }
+            }
+        }
+        else
+        {
+            canGoForward = false;
+        }
     }
 
     public IEnumerator Idle()
@@ -134,7 +176,6 @@ public class Enemy : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         currentState = EnemyStates.Patrol;
     }
-    public virtual void LookAtPlayer(Vector3 PlayerPos) { }
 
     public virtual void Attack(Vector3 Direction) 
     {
@@ -153,11 +194,11 @@ public class Enemy : MonoBehaviour {
             //using transform.up to make sure the bullet instances above the ground
             GameObject tempObj = Instantiate(damageDealer, transform.position + Direction+(transform.up/8), Quaternion.identity) as GameObject;
             tempObj.transform.LookAt(transform.position + Direction + (transform.up / 8));
-            tempObj.rigidbody.velocity = transform.forward * bulletSpeed * 1.5f;
+            tempObj.rigidbody.velocity = transform.forward * bulletSpeed;
         }
     }
 
-    public IEnumerator DetectPlayer(float Radius) 
+    public virtual IEnumerator DetectPlayer(float Radius) 
     {
         while (true)
         {
@@ -172,6 +213,7 @@ public class Enemy : MonoBehaviour {
                 {
                     if (h.gameObject.layer == LayerMask.NameToLayer("Player"))
                     {
+
                         if(Physics.Raycast(new Ray(transform.position+transform.up/4,h.transform.position-transform.position),out hit))
                         {
                             if (hit.transform.tag == "Player")
@@ -181,8 +223,6 @@ public class Enemy : MonoBehaviour {
                                 playerPos.y = transform.position.y;
                                 transform.LookAt(playerPos);
                                 currentState = EnemyStates.Attack;
-
-                                
                             }
                             if (hit.transform.tag == "Ground")
                             {

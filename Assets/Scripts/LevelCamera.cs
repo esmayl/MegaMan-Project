@@ -59,7 +59,10 @@ public class LevelCamera : MonoBehaviour {
         {
             for (int i = (int)player.GetComponent<PlayerMovement>().hp/10; i < 9; i++)
             {
-                hp[i].enabled = false;
+                if (hp[i])
+                {
+                    hp[i].enabled = false;
+                }
             }
         }
     }

@@ -20,13 +20,24 @@ public class ItemDatabase : MonoBehaviour {
 	void Start () {
 
         Item loot = new Item();
-        loot.itemName = "Potion";
+        loot.itemName = "Health Potion";
         loot.gainAmount = 20;
         loot.itemType = ItemType.hp;
 
-        ItemDatabase.AddToList("BaseEnemy10", loot);
-	
+        Item loot2 = new Item();
+        loot.itemName = "Score";
+        loot.gainAmount = 20;
+        loot.itemType = ItemType.score;
 
+        Item loot3 = new Item();
+        loot.itemName = "Mana Potion";
+        loot.gainAmount = 20;
+        loot.itemType = ItemType.mp;
+
+        ItemDatabase.AddToList("BaseEnemy10", loot);
+        ItemDatabase.AddToList("BaseEnemy30", loot2);
+        ItemDatabase.AddToList("BaseEnemy20", loot3);
+        ItemDatabase.AddToList("Turret", loot2);
 	}
 	
 	// Update is called once per frame

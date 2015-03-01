@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WeakEnemy : Enemy {
-
+public class RangedEnemy : Enemy {
 
 
     public override void Start()

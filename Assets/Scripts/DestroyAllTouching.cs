@@ -9,7 +9,7 @@ public class DestroyAllTouching : MonoBehaviour {
         if (col.tag == "Player")
         {
             Debug.Log(col.gameObject.name);
-            col.gameObject.GetComponent<PlayerMovement>().TakeDamage(10000);
+            col.gameObject.GetComponent<PlayerMovement>().TakeDamage(100);
         }
         else
         {
