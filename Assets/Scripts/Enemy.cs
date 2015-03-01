@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour {
     public GameObject player;
     public float hp = 100;
     public float speed = 3;
-    public int meleeDamage = 4;
+    public int meleeDamage = 5;
     public float rangeToStop = 0.5f;
     internal Vector3 walkDirection;
     internal float bulletSpeed =20;
@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour {
         if (player)
         {
             //using sphere cast to fake damage on collision
-            if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < 1.5f)
+            if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < rangeToStop)
             {
                 player.gameObject.GetComponent<PlayerMovement>().TakeDamage(Mathf.FloorToInt(meleeDamage*Time.deltaTime));
             }

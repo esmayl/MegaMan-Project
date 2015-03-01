@@ -10,6 +10,7 @@ public class LevelCamera : MonoBehaviour {
     public Image barForeground;
     public Text scoreText;
     public float moveSpeed = 2.5f;
+    public Vector3 startPos;
 
     internal int score = 0;
     Image[] hp = new Image[10];
@@ -128,7 +129,7 @@ public class LevelCamera : MonoBehaviour {
             Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
             float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
             float ratioY = screenPos.y / transform.GetChild(0).camera.pixelHeight;
-            if (ratioY > 0.15f)
+            if (ratioY > 0.12f)
             {
                 MoveUp();
                 return false;

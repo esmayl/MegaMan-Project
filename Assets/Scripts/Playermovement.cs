@@ -206,7 +206,7 @@ public class PlayerMovement : MonoBehaviour {
         hp -= dmg;
         anim.SetTrigger("Damaged");
         if (hp < 1) { StartCoroutine("Death"); }
-        else { Camera.main.GetComponentInParent<LevelCamera>().RemoveHP(); }
+        else { Camera.main.GetComponentInParent<LevelCamera>().RemoveHP(); velocity = Vector3.zero;}
 
     }
 
