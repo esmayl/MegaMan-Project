@@ -10,10 +10,12 @@ public class Item : MonoBehaviour {
     public ItemType itemType;
     public bool pickedUp;
     bool startAnimation;
+    public GameObject mesh;
+    public Material meshMaterial;
     Vector3 startPos;
 
-	// Use this for initialization
 	void Start () {
+        renderer.material = meshMaterial;
         startPos = transform.position;
         startAnimation = true;
 
@@ -37,6 +39,17 @@ public class Item : MonoBehaviour {
             col.GetComponent<PlayerMovement>().UseItem(this);
             pickedUp = true;
             transform.collider.enabled = false;
+            StartCoroutine("PickedUp");
         }
+    }
+
+    public IEnumerator PickedUp()
+    {
+        while (renderer.material.color.a > 0.01f)
+        {
+            renderer.material.color -= new Color(0, 0, 0, 0.05f);
+            yield return new WaitForEndOfFrame();
+        }
+        yield return null;
     }
 }

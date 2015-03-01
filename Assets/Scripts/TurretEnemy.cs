@@ -85,7 +85,6 @@ public class TurretEnemy : Enemy {
             //using transform.up to make sure the bullet instances above the ground
             GameObject tempObj = Instantiate(damageDealer, transform.position + Direction + transform.up , Quaternion.identity) as GameObject;
             tempObj.transform.LookAt(transform.position + Direction + transform.up);
-            tempObj.rigidbody.velocity = transform.forward * bulletSpeed;
         }
     }
 

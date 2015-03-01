@@ -8,13 +8,17 @@ public class Bullet : MonoBehaviour {
     public float weaponDamage = 1f;
     internal Transform attackHolder;
     internal float lifeTime = 5;
-
+    internal int bulletSpeed = 5;
 
     void Start()
     {
         StartCoroutine("DeathTimer");
     }
 
+    public virtual void Update()
+    {
+        rigidbody.velocity = transform.forward * bulletSpeed;
+    }
     public virtual void OnCollisionEnter(Collision coll)
     {
 

@@ -129,19 +129,9 @@ public class LevelCamera : MonoBehaviour {
             Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
             float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
             float ratioY = screenPos.y / transform.GetChild(0).camera.pixelHeight;
-            if (ratioY > 0.12f)
-            {
-                MoveUp();
-                return false;
-            }
-            else if (ratioY < 0.06f)
+            if (ratioY < 0.06f)
             {
                 MoveDown();
-                return false;
-            }
-            else if (ratio > 0.55f)
-            {
-                MoveForward();
                 return false;
             }
             else if (ratio < 0.45f)
@@ -149,6 +139,19 @@ public class LevelCamera : MonoBehaviour {
                 MoveBackward();
                 return false;
             }
+           
+
+            if (ratio > 0.55f)
+            {
+                MoveForward();
+                return false;
+            }
+            else if (ratioY > 0.12f)
+            {
+                MoveUp();
+                return false;
+            }
+            
             return true;
 
     }

@@ -18,9 +18,8 @@ public class Enemy : MonoBehaviour {
     public int meleeDamage = 5;
     public float rangeToStop = 0.5f;
     internal Vector3 walkDirection;
-    internal float bulletSpeed =20;
     public float range = 15;
-    public bool canGoForward = false                                                                                                     ;
+    public bool canGoForward = false;                                                                                                    
 
     //Pathfinding variables
     internal Vector3 velocity;
@@ -193,8 +192,7 @@ public class Enemy : MonoBehaviour {
             
             //using transform.up to make sure the bullet instances above the ground
             GameObject tempObj = Instantiate(damageDealer, transform.position + Direction+(transform.up/8), Quaternion.identity) as GameObject;
-            tempObj.transform.LookAt(transform.position + Direction + (transform.up / 8));
-            tempObj.rigidbody.velocity = transform.forward * bulletSpeed;
+            tempObj.transform.LookAt(flattendPos + (transform.up / 8));
         }
     }
 

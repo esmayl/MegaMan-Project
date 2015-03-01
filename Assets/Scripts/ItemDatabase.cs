@@ -15,24 +15,27 @@ public class ItemDatabase : MonoBehaviour {
 
     [SerializeField]
     public Dictionary<string, Item> publicLootTable = new Dictionary<string, Item>(3);
+    Item loot = new Item();
+    Item loot2 = new Item();
+    Item loot3 = new Item();
 
 	// Use this for initialization
 	void Start () {
 
-        Item loot = new Item();
         loot.itemName = "Health Potion";
         loot.gainAmount = 20;
         loot.itemType = ItemType.hp;
+        loot.meshMaterial = new Material(Shader.Find("Transparent/Diffuse"));
 
-        Item loot2 = new Item();
-        loot.itemName = "Score";
-        loot.gainAmount = 20;
-        loot.itemType = ItemType.score;
+        loot2.itemName = "Score";
+        loot2.gainAmount = 20;
+        loot2.itemType = ItemType.score;
+        loot2.meshMaterial = new Material(Shader.Find("Transparent/Diffuse"));
 
-        Item loot3 = new Item();
-        loot.itemName = "Mana Potion";
-        loot.gainAmount = 20;
-        loot.itemType = ItemType.mp;
+        loot3.itemName = "Mana Potion";
+        loot3.gainAmount = 20;
+        loot3.itemType = ItemType.mp;
+        loot3.meshMaterial = new Material(Shader.Find("Transparent/Diffuse"));
 
         ItemDatabase.AddToList("BaseEnemy10", loot);
         ItemDatabase.AddToList("BaseEnemy30", loot2);
@@ -65,7 +68,7 @@ public class ItemDatabase : MonoBehaviour {
         loot.AddComponent<Item>().gainAmount = lootTable[name].gainAmount;
         loot.GetComponent<Item>().itemName = lootTable[name].itemName;
         loot.GetComponent<Item>().itemType = lootTable[name].itemType;
-
+        loot.GetComponent<Item>().meshMaterial = lootTable[name].meshMaterial;
         loot.collider.isTrigger = true;
         
     }
