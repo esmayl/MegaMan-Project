@@ -322,7 +322,7 @@ MonoBehaviour:
   chargeBar: {fileID: 11432784}
   barForeground: {fileID: 11432792}
   scoreText: {fileID: 11462136}
-  moveSpeed: 5.4000001
+  moveSpeed: 2.5
 --- !u!114 &11462136
 MonoBehaviour:
   m_ObjectHideFlags: 1

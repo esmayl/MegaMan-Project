@@ -222,7 +222,7 @@ public class Enemy : MonoBehaviour {
                                 Vector3 playerPos = player.transform.position;
                                 playerPos.y = transform.position.y;
                                 transform.LookAt(playerPos);
-                                currentState = EnemyStates.Attack;
+                                currentState = EnemyStates.AttackAtPlayer;
                             }
                             if (hit.transform.tag == "Ground")
                             {

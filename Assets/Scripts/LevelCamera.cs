@@ -12,8 +12,8 @@ public class LevelCamera : MonoBehaviour {
     public float moveSpeed = 2.5f;
 
     internal int score = 0;
-    Image[] hp = new Image[9];
-    Image[] mp = new Image[9];
+    Image[] hp = new Image[10];
+    Image[] mp = new Image[10];
     RaycastHit hit;
 
     void Start()
@@ -55,7 +55,7 @@ public class LevelCamera : MonoBehaviour {
 
     public void RemoveHP()
     {
-        if (player.GetComponent<PlayerMovement>().hp < 100)
+        if (player.GetComponent<PlayerMovement>().hp <= 100)
         {
             for (int i = (int)player.GetComponent<PlayerMovement>().hp/10; i < 9; i++)
             {
@@ -91,7 +91,7 @@ public class LevelCamera : MonoBehaviour {
 
     public void RemoveMP()
     {
-        if (player.GetComponent<PlayerMovement>().mp < 100)
+        if (player.GetComponent<PlayerMovement>().mp <= 100)
         {
             for (int i = (int)player.GetComponent<PlayerMovement>().mp / 10; i < 9; i++)
             {
@@ -100,26 +100,26 @@ public class LevelCamera : MonoBehaviour {
         }
     }
 
-    void LateUpdate()
+    void FixedUpdate()
     {
         SafeFrameCheck();
     }
 
     public void MoveForward()
     {
-        transform.position += Time.deltaTime * transform.forward*moveSpeed*2;
+        transform.position += Time.fixedDeltaTime * transform.forward*moveSpeed*2;
     }
     public void MoveBackward()
     {
-        transform.position -= Time.deltaTime * transform.forward * moveSpeed*2;
+        transform.position -= Time.fixedDeltaTime * transform.forward * moveSpeed * 2;
     }
     public void MoveDown()
     {
-        transform.position -= Time.deltaTime * transform.up * moveSpeed*3.5f;
+        transform.position -= Time.fixedDeltaTime * transform.up * moveSpeed * 3.5f;
     }
     public void MoveUp()
     {
-        transform.position += Time.deltaTime * transform.up * moveSpeed*1.5f;
+        transform.position += Time.fixedDeltaTime * transform.up * moveSpeed * 1.5f;
     }
 
     bool SafeFrameCheck()
@@ -138,7 +138,7 @@ public class LevelCamera : MonoBehaviour {
                 MoveDown();
                 return false;
             }
-            else if (ratio > 0.65f)
+            else if (ratio > 0.55f)
             {
                 MoveForward();
                 return false;
