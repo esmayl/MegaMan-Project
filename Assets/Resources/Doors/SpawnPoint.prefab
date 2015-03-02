@@ -41,7 +41,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 100002, guid: 2bdc564ab52ffc147a0e39200c93c8aa, type: 2}
   camera: {fileID: 132784, guid: a21557bfddcb5864f81e2589d473f6cf, type: 2}
-  cameraRange: 10
+  cameraRange: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

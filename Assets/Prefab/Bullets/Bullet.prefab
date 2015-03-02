@@ -86,6 +86,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 0}
+  weaponDamage: 1
+  bulletSpeed: 6
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -22,6 +22,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _Normal2
+        second:
+          m_Texture: {fileID: 2800000, guid: 7d85d5387c47a26409f4d8221423aadb, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _Diffuse
         second:
           m_Texture: {fileID: 2800000, guid: 819eaf4c7f574ab40bf781ac71070322, type: 3}
@@ -41,7 +48,18 @@ Material:
           m_Texture: {fileID: 2800000, guid: 2e2642492f3ccce4792f671d9398de35, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats: {}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: abe6d489fcf47bd4cb5ed2af266e7994, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Glosiness
+        second: .681817472
     m_Colors:
       data:
         first:

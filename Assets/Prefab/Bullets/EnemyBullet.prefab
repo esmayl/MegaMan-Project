@@ -103,7 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 0}
-  weaponDamage: 1
+  weaponDamage: 5
+  bulletSpeed: 5
 --- !u!114 &11423120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -117,6 +118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particle: {fileID: 0}
   weaponDamage: 5
+  bulletSpeed: 5
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

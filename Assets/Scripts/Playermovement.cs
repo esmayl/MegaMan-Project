@@ -261,8 +261,6 @@ public class PlayerMovement : MonoBehaviour {
                 GainScore(itemToUse.gainAmount);
                 break;
         }
-        Debug.LogError("");
-
     }
 
     private void GainScore(int p)

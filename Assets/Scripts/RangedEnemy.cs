@@ -42,6 +42,7 @@ public class RangedEnemy : Enemy {
                                 playerPos.y = transform.position.y;
                                 transform.LookAt(playerPos);
                                 currentState = EnemyStates.Attack;
+                                hits = null;
                             }
                             if (hit.transform.tag == "Ground")
                             {

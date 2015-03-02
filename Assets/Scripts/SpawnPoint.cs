@@ -12,7 +12,7 @@ public class SpawnPoint : MonoBehaviour {
 
         if (!player.GetComponent<CharacterController>()) { player.AddComponent<CharacterController>();}
         if (player) { playerInstance  = Instantiate(player, transform.position, Quaternion.identity)as GameObject;}
-        if (camera) { camera.GetComponent<LevelCamera>().player = playerInstance; Instantiate(camera,new Vector3(cameraRange, player.transform.position.y *2.5f,  player.transform.position.z/2), Quaternion.identity); }
+        if (camera) { camera.GetComponent<LevelCamera>().player = playerInstance; Instantiate(camera,new Vector3(cameraRange, player.transform.position.y *4f,  player.transform.position.z/8), Quaternion.identity); }
     }
 	
 	// Update is called once per frame

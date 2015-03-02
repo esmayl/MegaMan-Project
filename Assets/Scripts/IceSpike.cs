@@ -10,7 +10,7 @@ public class IceSpike : Bullet {
         lifeTime =2;
         weaponDamage = 10;    
     }
-    public override void Update()
+    public override void FixedUpdate()
     {
     }
 
