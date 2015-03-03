@@ -101,6 +101,14 @@ public class LevelCamera : MonoBehaviour {
         }
     }
 
+    void AddScore()
+    {
+        if (player.GetComponent<PlayerMovement>().score > 0)
+        {
+            scoreText.text = ""+score;
+        }
+    }
+
     void FixedUpdate()
     {
         SafeFrameCheck();

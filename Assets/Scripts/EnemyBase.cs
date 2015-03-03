@@ -50,15 +50,7 @@ public class EnemyBase : MonoBehaviour {
 
 	public virtual void Update () {
 
-        if (hp <= 0)
-        {
-            if (transform.name.Contains("(Clone)"))
-            {
-                transform.name.Remove(transform.name.IndexOf("("));
-            }
-            ItemDatabase.DropItem(transform.position, transform.name);
-            Destroy(gameObject,0.1f);
-        }
+        
         if (transform.position.y > height)
         {
             transform.position = new Vector3(transform.position.x, height, transform.position.z);
@@ -69,11 +61,29 @@ public class EnemyBase : MonoBehaviour {
         {
             controller.velocity = velocity;
         }
+
+        if (hp < 0)
+        {
+            ItemDatabase.DropItem(transform.position, transform.name);
+            Destroy(gameObject);
+            Debug.LogError("");
+        }
 	}
 
     public void TakeDamage(float damage)
     {
+        if (hp < 0)
+        {
+            ItemDatabase.DropItem(transform.position, transform.name);
+            Destroy(gameObject);
+        }
+
         hp -= damage;
+        if (hp <= 0)
+        {
+            ItemDatabase.DropItem(transform.position, transform.name);
+            Destroy(gameObject);
+        }
     }
 
     public virtual void Jump() { }

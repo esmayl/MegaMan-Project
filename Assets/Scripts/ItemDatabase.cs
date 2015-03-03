@@ -33,14 +33,13 @@ public class ItemDatabase : MonoBehaviour {
         loot2.meshMaterial = new Material(Shader.Find("Transparent/Diffuse"));
 
         loot3.itemName = "Mana Potion";
-        loot3.gainAmount = 20;
+        loot3.gainAmount = 50;
         loot3.itemType = ItemType.mp;
         loot3.meshMaterial = new Material(Shader.Find("Transparent/Diffuse"));
 
-        ItemDatabase.AddToList("BaseEnemy10", loot);
-        ItemDatabase.AddToList("BaseEnemy30", loot2);
-        ItemDatabase.AddToList("BaseEnemy20", loot3);
+        ItemDatabase.AddToList("MeleeEnemy", loot);
         ItemDatabase.AddToList("Turret", loot2);
+        ItemDatabase.AddToList("RangedEnemy", loot3);
 	}
 	
 	// Update is called once per frame

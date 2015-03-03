@@ -265,6 +265,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void GainScore(int p)
     {
+        if (!usingItem) { return; }
         Camera.main.GetComponentInParent<LevelCamera>().score += p;
         Camera.main.GetComponentInParent<LevelCamera>().scoreText.text = "" + score;
 

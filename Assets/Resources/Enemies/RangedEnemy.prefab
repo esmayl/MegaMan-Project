@@ -129,7 +129,7 @@ MonoBehaviour:
   damageDealer: {fileID: 100000, guid: e1942449d45a94c44bf9f8715690b554, type: 2}
   currentState: 1
   player: {fileID: 0}
-  hp: 100
+  hp: 20
   speed: 3
   meleeDamage: 5
   rangeToStop: 1

@@ -11,11 +11,17 @@ public class Megaman : PlayerMovement {
     public override void Start()
     {
         base.Start();
+        if (transform.name.Contains("(Clone)"))
+        {
+            transform.name.Remove(transform.name.IndexOf("("));
+        }
     }
 
     public override void Update()
     {
         base.Update();
+
+
 
         if (Input.GetButtonDown("Fire1"))
         {
