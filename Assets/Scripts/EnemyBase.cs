@@ -7,7 +7,7 @@ public enum EnemyStates { Idle,Patrol,Attack,AttackAtPlayer}
 public enum EnemyTypes { Melee,Ranged,FlyingMelee,FlyingRanged}
 
 [RequireComponent(typeof(Rigidbody))]
-public class Enemy : MonoBehaviour {
+public class EnemyBase : MonoBehaviour {
 
     public EnemyTypes enemyType = EnemyTypes.Ranged;
     public GameObject damageDealer;
@@ -43,6 +43,8 @@ public class Enemy : MonoBehaviour {
             }
         }
         controller = rigidbody;
+        StartCoroutine("DetectPlayer", range);
+
     }
 
 
@@ -62,13 +64,10 @@ public class Enemy : MonoBehaviour {
             transform.position = new Vector3(transform.position.x, height, transform.position.z);
         }
 
-        if (player)
+        
+        if (canGoForward)
         {
-            //using sphere cast to fake damage on collision
-            if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < rangeToStop)
-            {
-                player.gameObject.GetComponent<PlayerMovement>().TakeDamage(Mathf.FloorToInt(meleeDamage*Time.deltaTime));
-            }
+            controller.velocity = velocity;
         }
 	}
 
@@ -90,7 +89,7 @@ public class Enemy : MonoBehaviour {
         {
             if (hit.transform.tag == "Ground")
             {
-                if (hit.distance < 0.4f)
+                if (hit.distance < 0.3f)
                 {
                     if (!Physics.Linecast(transform.position, transform.position + transform.forward))
                     {
@@ -98,12 +97,10 @@ public class Enemy : MonoBehaviour {
                         target = transform.position + transform.forward;
                         walkDirection = target - transform.position;
                         velocity = controller.velocity;
-
                         if (walkDirection.magnitude > rangeToStop)
                         {
                             velocity = walkDirection.normalized * speed;
                         }
-                        controller.velocity = velocity;
                     }
                     else
                     {
@@ -140,6 +137,7 @@ public class Enemy : MonoBehaviour {
                     {
                         canGoForward = true;
                         walkDirection = target.position - transform.position;
+                        walkDirection.y = 0;
                         velocity = controller.velocity;
 
                         if (walkDirection.magnitude > rangeToStop)
@@ -184,6 +182,7 @@ public class Enemy : MonoBehaviour {
             return;
         }
 
+        velocity = Vector3.zero;
         if (Mathf.Abs(player.transform.position.y - transform.position.y) < 1f)
         {
             Vector3 flattendPos = player.transform.position;
@@ -221,6 +220,16 @@ public class Enemy : MonoBehaviour {
                                 playerPos.y = transform.position.y;
                                 transform.LookAt(playerPos);
                                 currentState = EnemyStates.AttackAtPlayer;
+
+                                if (player)
+                                {
+                                    //using sphere cast to fake damage on collision
+                                    if (Mathf.Abs(Vector3.Distance(player.transform.position, transform.position)) < rangeToStop)
+                                    {
+                                        player.gameObject.GetComponent<PlayerMovement>().TakeDamage(meleeDamage);
+                                    }
+                                }
+                                hits = null;
                             }
                             if (hit.transform.tag == "Ground")
                             {
@@ -269,8 +278,19 @@ public class Enemy : MonoBehaviour {
         }
     }
 
+
     /// <summary>
     /// only use in air AKA flying enemy
     /// </summary>
     public virtual void MoveUp() { }
+
+    public void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(255, 255, 255, 0.5f);
+
+        Gizmos.DrawSphere(transform.position, range);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position + transform.forward, -transform.up);
+    }
 }

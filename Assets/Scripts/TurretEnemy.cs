@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TurretEnemy : Enemy {
+public class TurretEnemy : EnemyBase {
 
     public GameObject barrel;
 
