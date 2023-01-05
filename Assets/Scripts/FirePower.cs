@@ -31,7 +31,7 @@ public class FirePower : Power {
 
             instance.transform.LookAt(gun.transform.position + (gun.transform.forward * 1.2f));
 
-            instance.rigidbody.AddForce(instance.transform.forward * speed);
+            instance.GetComponent<Rigidbody>().AddForce(instance.transform.forward * speed);
 
             instance.GetComponent<FireBomb>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
             instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;

@@ -21,7 +21,7 @@ public class Buster : Power {
 
         instance = Instantiate(bullet, gun.transform.position + gun.transform.forward, Quaternion.identity) as GameObject;
 
-        instance.rigidbody.useGravity = false;
+        instance.GetComponent<Rigidbody>().useGravity = false;
         instance.transform.LookAt(gun.transform.position + (gun.transform.forward * 1.2f));
         instance.SendMessage("AddChargeDmg", value);
         instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;

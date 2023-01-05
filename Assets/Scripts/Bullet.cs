@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour {
 
     public virtual void FixedUpdate()
     {
-        rigidbody.velocity = transform.forward * bulletSpeed;
+        GetComponent<Rigidbody>().velocity = transform.forward * bulletSpeed;
     }
     public virtual void OnCollisionEnter(Collision coll)
     {

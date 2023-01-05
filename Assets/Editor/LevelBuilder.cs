@@ -110,7 +110,7 @@ public class LevelBuilder : EditorWindow  {
         window.minSize = new Vector2(410, 350);
         window.title = "LevelBuilder";
 
-        sceneCam = GameObject.Find("SceneCamera").camera;
+        sceneCam = GameObject.Find("SceneCamera").GetComponent<Camera>();
 
 	}
 
@@ -155,7 +155,7 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.renderer.material = selectedMaterial;
+                                previewObject.GetComponent<Renderer>().material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
                                 Selection.activeGameObject = previewObject;                
@@ -215,7 +215,7 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.renderer.material = selectedMaterial;
+                                previewObject.GetComponent<Renderer>().material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
                                 Selection.activeGameObject = previewObject;
@@ -248,7 +248,7 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.transform.GetChild(0).renderer.material = selectedMaterial;
+                                previewObject.transform.GetChild(0).GetComponent<Renderer>().material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
 
@@ -279,7 +279,7 @@ public class LevelBuilder : EditorWindow  {
                                 spawnPos.z = Mathf.Round(spawnPos.z);
                                 previewObject = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                                 previewObject.transform.position = spawnPos;
-                                previewObject.renderer.material = selectedMaterial;
+                                previewObject.GetComponent<Renderer>().material = selectedMaterial;
                                 previewObject.layer = LayerMask.NameToLayer("Preview");
 
 
@@ -332,11 +332,11 @@ public class LevelBuilder : EditorWindow  {
                                     {
                                         if (previewObject.GetComponent<MeshFilter>())
                                         {
-                                            previewObject.renderer.material = selectedMaterial;
+                                            previewObject.GetComponent<Renderer>().material = selectedMaterial;
                                         }
                                         else
                                         {
-                                            previewObject.transform.GetChild(0).renderer.material = selectedMaterial;
+                                            previewObject.transform.GetChild(0).GetComponent<Renderer>().material = selectedMaterial;
                                         }
                                     }
                                     if (Selection.gameObjects.Length > 0)
@@ -346,13 +346,13 @@ public class LevelBuilder : EditorWindow  {
                                         {
                                             if (ga.GetComponent<MeshFilter>())
                                             {
-                                                ga.renderer.material = selectedMaterial;
+                                                ga.GetComponent<Renderer>().material = selectedMaterial;
                                             }
                                             if (ga.name.Contains("(Group)"))
                                             {
                                                 foreach (Transform t in ga.transform)
                                                 {
-                                                    t.GetChild(0).renderer.material = selectedMaterial;
+                                                    t.GetChild(0).GetComponent<Renderer>().material = selectedMaterial;
                                                 }
                                             }
                                         }
@@ -447,7 +447,7 @@ public class LevelBuilder : EditorWindow  {
 
         if (e.isMouse && previewObject != null)
         {
-            if (e.type == EventType.mouseDown)
+            if (e.type == EventType.MouseDown)
             {
                 mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
                 mouseStart.x = depth;
@@ -456,7 +456,7 @@ public class LevelBuilder : EditorWindow  {
                 oldDelta = e.delta;
             }
 
-            if (e.type == EventType.mouseUp && e.button ==0)
+            if (e.type == EventType.MouseUp && e.button ==0)
             {
 
                 mousePos = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
@@ -472,7 +472,7 @@ public class LevelBuilder : EditorWindow  {
                     {
                         GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                         tempObj.transform.position = mousePos;
-                        if (!hazard) { tempObj.renderer.material = selectedMaterial; }
+                        if (!hazard) { tempObj.GetComponent<Renderer>().material = selectedMaterial; }
                         tempObj.transform.localScale = previewObject.transform.localScale;
                         tempObj.isStatic = true;
                         tempObj = null;
@@ -482,7 +482,7 @@ public class LevelBuilder : EditorWindow  {
                 {
                     GameObject tempObj = PrefabUtility.InstantiatePrefab(objToPlace) as GameObject;
                     tempObj.transform.position = mousePos;
-                    if (!hazard) { tempObj.transform.GetChild(0).renderer.material = selectedMaterial; }
+                    if (!hazard) { tempObj.transform.GetChild(0).GetComponent<Renderer>().material = selectedMaterial; }
                     tempObj.transform.localScale = previewObject.transform.localScale;
                     tempObj = null;
                 }
@@ -490,7 +490,7 @@ public class LevelBuilder : EditorWindow  {
             }
         }
 
-        if (e.type == EventType.mouseDown)
+        if (e.type == EventType.MouseDown)
         {
             mouseStart = sceneCam.ScreenToWorldPoint(new Vector2(sceneCam.pixelRect.width - (sceneCam.pixelRect.width - e.mousePosition.x), sceneCam.pixelRect.height - e.mousePosition.y));
             mouseStart.x = depth;

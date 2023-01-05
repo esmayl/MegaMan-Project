@@ -42,7 +42,7 @@ public class EnemyBase : MonoBehaviour {
                 height = transform.position.y;
             }
         }
-        controller = rigidbody;
+        controller = GetComponent<Rigidbody>();
         StartCoroutine("DetectPlayer", range);
 
     }

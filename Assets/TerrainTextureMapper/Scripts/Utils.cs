@@ -26,15 +26,15 @@ public class Utils
 	
 	public static bool IsTouchingOtherCollider(Vector3 position, GameObject Prefab)
 	{
-		if (Prefab.collider == null)
+		if (Prefab.GetComponent<Collider>() == null)
 			return false;
 		
 		
-		float minX = Prefab.collider.bounds.min.x;
-		float minZ = Prefab.collider.bounds.min.z;
+		float minX = Prefab.GetComponent<Collider>().bounds.min.x;
+		float minZ = Prefab.GetComponent<Collider>().bounds.min.z;
 		
-		float maxX = Prefab.collider.bounds.max.x;
-		float maxZ = Prefab.collider.bounds.max.z;
+		float maxX = Prefab.GetComponent<Collider>().bounds.max.x;
+		float maxZ = Prefab.GetComponent<Collider>().bounds.max.z;
 		
 		float radiusX = (maxX - minX) / 2;
 		float radiusZ = (maxZ - minZ) / 2;

@@ -36,7 +36,7 @@ public class TurretEnemy : EnemyBase {
                         player = h.gameObject;
                         Vector3 playerPos = player.transform.position;
                         currentState = EnemyStates.Attack;
-                        if (!animation.isPlaying) { animation.Play(); yield return new WaitForSeconds(2f); animation.enabled = false; }
+                        if (!GetComponent<Animation>().isPlaying) { GetComponent<Animation>().Play(); yield return new WaitForSeconds(2f); GetComponent<Animation>().enabled = false; }
                     }
                 }
             }
@@ -77,7 +77,7 @@ public class TurretEnemy : EnemyBase {
             //using transform.up to make sure the bullet instances above the ground
             GameObject tempObj = Instantiate(damageDealer, transform.position + barrel.transform.forward*1.5f + transform.up*1.5f , Quaternion.identity) as GameObject;
             tempObj.transform.LookAt(player.transform.position + transform.up / 2);
-            tempObj.rigidbody.velocity = barrel.transform.forward;
+            tempObj.GetComponent<Rigidbody>().velocity = barrel.transform.forward;
             tempObj = null;
     }
 

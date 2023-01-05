@@ -14,7 +14,7 @@ public class FireBomb : Bullet {
     public IEnumerator DoExplosion()
     {
         yield return new WaitForSeconds(0.5f);
-        explosion = Instantiate(particle, transform.position, Quaternion.identity) as GameObject;
+        explosion = Instantiate(particle, transform.position, Quaternion.identity).gameObject;
         Destroy(gameObject);
     }
 
@@ -27,7 +27,7 @@ public class FireBomb : Bullet {
         }
         if (col.gameObject.tag == "Ground")
         {
-            explosion = Instantiate(particle, transform.position, Quaternion.identity) as GameObject;
+            explosion = Instantiate(particle, transform.position, Quaternion.identity).gameObject;
             Destroy(gameObject);
         }
 

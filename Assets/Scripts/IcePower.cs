@@ -45,8 +45,8 @@ public class IcePower : Power {
             instance = Instantiate(iceObj, gun.transform.position - iceDirection / 1.2f, Quaternion.identity) as GameObject;
             instance.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             instance.transform.LookAt(gun.transform.position + (iceDirection * 1.1f));
-            instance.rigidbody.useGravity = true;
-            instance.rigidbody.AddForce(instance.transform.forward * iceSpeed);
+            instance.GetComponent<Rigidbody>().useGravity = true;
+            instance.GetComponent<Rigidbody>().AddForce(instance.transform.forward * iceSpeed);
             instance.GetComponent<IceSpike>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
             instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
 
@@ -59,8 +59,8 @@ public class IcePower : Power {
             instance = Instantiate(iceObj, gun.transform.position - iceDirection / 1.2f, Quaternion.identity) as GameObject;
             instance.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             instance.transform.LookAt(gun.transform.position + (iceDirection * 1.1f));
-            instance.rigidbody.useGravity = true;
-            instance.rigidbody.AddForce(instance.transform.forward * iceSpeed);
+            instance.GetComponent<Rigidbody>().useGravity = true;
+            instance.GetComponent<Rigidbody>().AddForce(instance.transform.forward * iceSpeed);
             instance.GetComponent<IceSpike>().attackHolder = player.GetComponent<PlayerMovement>().powerHolder.transform;
             instance.transform.parent = player.GetComponent<PlayerMovement>().powerHolder.transform;
         }
@@ -75,7 +75,7 @@ public class IcePower : Power {
         {
             foreach (Transform t in powerHolder.transform)
             {
-                if (t.collider.isTrigger)
+                if (t.GetComponent<Collider>().isTrigger)
                 {
                     Destroy(t.gameObject);
                 }
@@ -162,8 +162,8 @@ public class IcePower : Power {
                 obj.transform.Rotate(transform.right, Random.Range(-180, -90));
             }
         obj.transform.parent = powerHolder.transform;
-        obj.transform.collider.isTrigger = true;
-        Destroy(obj.rigidbody);       
+        obj.transform.GetComponent<Collider>().isTrigger = true;
+        Destroy(obj.GetComponent<Rigidbody>());       
     }
 
     public void ShapeIce(GameObject ga ,Vector3 scale)

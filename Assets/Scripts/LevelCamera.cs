@@ -135,9 +135,9 @@ public class LevelCamera : MonoBehaviour {
     {
         Application.targetFrameRate = 60;
 
-            Vector3 screenPos = transform.GetChild(0).camera.WorldToScreenPoint(player.transform.position);
-            float ratio = screenPos.x / transform.GetChild(0).camera.pixelWidth;
-            float ratioY = screenPos.y / transform.GetChild(0).camera.pixelHeight;
+            Vector3 screenPos = transform.GetChild(0).GetComponent<Camera>().WorldToScreenPoint(player.transform.position);
+            float ratio = screenPos.x / transform.GetChild(0).GetComponent<Camera>().pixelWidth;
+            float ratioY = screenPos.y / transform.GetChild(0).GetComponent<Camera>().pixelHeight;
             if (ratioY < 0.06f)
             {
                 MoveDown();

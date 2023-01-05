@@ -5,7 +5,7 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
-	public ProceduralMaterial substance;
+	// public ProceduralMaterial substance;
     public Power[] powers;
     public Power activePower;
     public GameObject gun;
@@ -175,10 +175,10 @@ public class PlayerMovement : MonoBehaviour {
         velocity.x = 0;
         controller.Move(velocity * Time.deltaTime);
 
-        if (substance.GetProceduralFloat("Snow") >= 1)
-        {
-            SummonBoss();
-        }
+        // if (substance.GetProceduralFloat("Snow") >= 1)
+        // {
+        //     SummonBoss();
+        // }
 	}
 
     public void Jump()

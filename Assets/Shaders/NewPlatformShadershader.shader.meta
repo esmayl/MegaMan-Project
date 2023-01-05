@@ -1,5 +1,15 @@
 fileFormatVersion: 2
 guid: 30e2d8edab95c0e4893db9dea76ea61c
 ShaderImporter:
-  defaultTextures: []
+  externalObjects: {}
+  defaultTextures:
+  - _Mask: {fileID: 2800000, guid: 40eeecf95be93f446b587cb43e1a5e7e, type: 3}
+  - _Diffuse: {fileID: 2800000, guid: e8ee23dbbb3dcee42b35ea868d177374, type: 3}
+  - _Metal: {fileID: 2800000, guid: 178ad93bf5f51a949a515daaa591cf09, type: 3}
+  - _Normal: {fileID: 2800000, guid: 3b8ea661c544be3418ed92c67d50abb5, type: 3}
+  - _Normal2: {fileID: 2800000, guid: 48b2692e7a6a71e428925c72feb60eb3, type: 3}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -68,7 +68,7 @@ public class ItemDatabase : MonoBehaviour {
         loot.GetComponent<Item>().itemName = lootTable[name].itemName;
         loot.GetComponent<Item>().itemType = lootTable[name].itemType;
         loot.GetComponent<Item>().meshMaterial = lootTable[name].meshMaterial;
-        loot.collider.isTrigger = true;
+        loot.GetComponent<Collider>().isTrigger = true;
         
     }
 }

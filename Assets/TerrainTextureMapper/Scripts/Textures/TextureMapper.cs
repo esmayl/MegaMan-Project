@@ -148,8 +148,8 @@ public class TextureMapper : IItem
 	{
 		TerrainData terData = terrain.terrainData;
 		
-		int Tw = terData.heightmapWidth - 1;
-		int Th = terData.heightmapHeight - 1;
+		int Tw = terData.heightmapResolution - 1;
+		int Th = terData.heightmapResolution - 1;
 		float[,] heightMapData = new float[Tw, Th];
 		float[,,] splatMapData;
 		int Px;
@@ -322,8 +322,8 @@ public class TextureMapper : IItem
 	{
 		TerrainData terData = terrain.terrainData;
 		
-		int Tw = terData.heightmapWidth - 1;
-		int Th = terData.heightmapHeight - 1;
+		int Tw = terData.heightmapResolution - 1;
+		int Th = terData.heightmapResolution - 1;
 		
 		for(int x = 0; x < Tw; x++)
 		{
